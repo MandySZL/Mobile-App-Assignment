@@ -1,0 +1,20 @@
+﻿<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:SchoolFacilityReport"
+             xmlns:converters="clr-namespace:SchoolFacilityReport.Converters" 
+             x:Class="SchoolFacilityReport.App">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
+                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converters:StatusLocalizationConverter x:Key="StatusLocConverter" />
+            <converters:CategoryLocalizationConverter x:Key="CategoryLocConverter" />
+            <converters:CategoryIconConverter x:Key="CategoryIconConverter" />
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

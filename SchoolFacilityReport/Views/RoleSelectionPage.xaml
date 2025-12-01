@@ -1,0 +1,68 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
+             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings"
+             x:Class="SchoolFacilityReport.Views.RoleSelectionPage"
+             Title=" "
+             BackgroundColor="#FFFFFF">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="30" Padding="30" VerticalOptions="Center">
+
+            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
+                <Label Text="Welcome Aboard! &#x1F44B;" 
+                       FontSize="16" TextColor="#999" 
+                       HorizontalOptions="Center" CharacterSpacing="1"/>
+                <Label Text="{x:Static strings:AppResources.RoleTitle}" 
+                       FontSize="34" FontAttributes="Bold" TextColor="#222" 
+                       HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+
+            <Border StrokeThickness="0" StrokeShape="RoundRectangle 20" HeightRequest="110">
+                <Border.Shadow>
+                    <Shadow Brush="#8E2DE2" Offset="0,8" Radius="15" Opacity="0.3"/>
+                </Border.Shadow>
+
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="#4A00E0" Offset="0.0" />
+                        <GradientStop Color="#8E2DE2" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Border.Background>
+
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectRoleCommand}" CommandParameter="Student"/>
+                </Border.GestureRecognizers>
+
+                <Grid ColumnDefinitions="80, *" Padding="15">
+                    <Label Text="&#x1F393;" FontSize="40" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="{x:Static strings:AppResources.StudentRole}" 
+                               TextColor="White" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="Report issues &amp; track status" 
+                               TextColor="White" Opacity="0.8" FontSize="12"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <Border Stroke="#EEEEEE" StrokeThickness="2" StrokeShape="RoundRectangle 20" HeightRequest="110" BackgroundColor="#FAFAFA">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectRoleCommand}" CommandParameter="Maintenance"/>
+                </Border.GestureRecognizers>
+
+                <Grid ColumnDefinitions="80, *" Padding="15">
+                    <Label Text="&#x1F6E0;" FontSize="40" VerticalOptions="Center" HorizontalOptions="Center"/>
+
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="{x:Static strings:AppResources.AdminRole}" 
+                               TextColor="#333" FontSize="20" FontAttributes="Bold"/>
+                        <Label Text="Manage repair tickets" 
+                               TextColor="#888" FontSize="12"/>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,31 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
+             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings"
+             x:Class="SchoolFacilityReport.Views.SettingsPage"
+             Title="{x:Static strings:AppResources.SettingsTitle}">
+
+    <ContentPage.BindingContext>
+        <vm:SettingsViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Spacing="20" Padding="20">
+
+        <Frame CornerRadius="10" Padding="15">
+            <HorizontalStackLayout Spacing="15">
+                <Label Text="🌐" FontSize="24" VerticalOptions="Center"/>
+
+                <VerticalStackLayout>
+                    <Label Text="{x:Static strings:AppResources.LanguageLabel}" FontAttributes="Bold" FontSize="16"/>
+                    <Label Text="{x:Static strings:AppResources.ChangeLang}" TextColor="Gray" FontSize="12"/>
+                </VerticalStackLayout>
+
+                <Button Text="Change" 
+                        Command="{Binding ChangeLanguageCommand}"
+                        HorizontalOptions="EndAndExpand"
+                        HeightRequest="40"/>
+            </HorizontalStackLayout>
+        </Frame>
+
+    </VerticalStackLayout>
+</ContentPage>

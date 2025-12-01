@@ -1,0 +1,59 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
+             x:Class="SchoolFacilityReport.Views.MyReportsPage"
+             Title="My History">
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}" 
+                 Command="{Binding LoadDataCommand}">
+
+        <CollectionView ItemsSource="{Binding ReportsList}" Margin="15">
+            <CollectionView.EmptyView>
+                <Label Text="还没有报修记录，下拉刷新试试？" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       TextColor="Gray"/>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="0,0,0,15" Padding="15" CornerRadius="10" HasShadow="True">
+                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto">
+
+                            <Label Grid.Row="0" Grid.Column="0" 
+                                   Text="{Binding Category, Converter={StaticResource CategoryLocConverter}}"
+                                   FontAttributes="Bold" FontSize="18"/>
+
+                            <Label Grid.Row="0" Grid.Column="1" 
+                                   Text="{Binding Status, Converter={StaticResource StatusLocConverter}}"
+                                   TextColor="OrangeRed" FontAttributes="Bold"/>
+
+                            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Text="{Binding Description}" 
+                                   TextColor="Gray" MaxLines="2" LineBreakMode="TailTruncation"
+                                   Margin="0,5"/>
+
+                            <Label Grid.Row="2" Grid.Column="0" 
+                                   Text="{Binding CreatedAt, StringFormat='提交时间: {0:MM-dd HH:mm}'}" 
+                                   FontSize="12" TextColor="Silver"/>
+
+
+                            <Image Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                   Source="{Binding ImageUrl}"
+                                   Aspect="AspectFill"
+                                   WidthRequest="60" HeightRequest="60"
+                                   IsVisible="{Binding ImageUrl, Converter={StaticResource IsNotNullConverter}}"
+                                   HorizontalOptions="End"
+                                   Margin="10,0,0,0">
+                                <Image.Clip>
+                                    <EllipseGeometry Center="30,30" RadiusX="30" RadiusY="30"/>
+                                </Image.Clip>
+                            </Image>
+
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

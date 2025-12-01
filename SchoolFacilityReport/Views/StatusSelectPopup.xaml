@@ -1,0 +1,45 @@
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings"
+               x:Class="SchoolFacilityReport.Views.StatusSelectPopup">
+
+
+    <Border StrokeThickness="0" StrokeShape="RoundRectangle 20,20,0,0" 
+            BackgroundColor="White" 
+            VerticalOptions="End" HorizontalOptions="Fill"
+            Padding="20,30,20,40"
+            WidthRequest="400">
+        <Border.Shadow>
+            <Shadow Brush="Black" Offset="0,-5" Radius="20" Opacity="0.2"/>
+        </Border.Shadow>
+
+        <VerticalStackLayout Spacing="15">
+
+            <Label Text="{x:Static strings:AppResources.StatusUpdateTitle}" 
+                   FontSize="18" FontAttributes="Bold" TextColor="#333" 
+                   HorizontalOptions="Center" Margin="0,0,0,10"/>
+
+            <Button Text="{x:Static strings:AppResources.StatusPending}" 
+                    Clicked="OnStatusClicked" CommandParameter="Pending"
+                    BackgroundColor="#FFF3E0" TextColor="#FF9800" FontAttributes="Bold"
+                    CornerRadius="12" HeightRequest="50"/>
+
+            <Button Text="{x:Static strings:AppResources.StatusInProgress}" 
+                    Clicked="OnStatusClicked" CommandParameter="In Progress"
+                    BackgroundColor="#E3F2FD" TextColor="#2196F3" FontAttributes="Bold"
+                    CornerRadius="12" HeightRequest="50"/>
+
+            <Button Text="{x:Static strings:AppResources.StatusResolved}" 
+                    Clicked="OnStatusClicked" CommandParameter="Resolved"
+                    BackgroundColor="#E8F5E9" TextColor="#4CAF50" FontAttributes="Bold"
+                    CornerRadius="12" HeightRequest="50"/>
+
+            <Button Text="Cancel" 
+                    Clicked="OnCancelClicked"
+                    BackgroundColor="Transparent" TextColor="Gray"
+                    Margin="0,10,0,0"/>
+
+        </VerticalStackLayout>
+    </Border>
+</toolkit:Popup>

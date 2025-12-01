@@ -1,0 +1,106 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
+             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings"
+             x:Class="SchoolFacilityReport.Views.AdminDashboardPage"
+             x:Name="ThisPage"
+             Title="{x:Static strings:AppResources.AdminTitle}"
+             BackgroundColor="#F5F5F5">
+
+    <RefreshView IsRefreshing="{Binding IsRefreshing}" 
+                 Command="{Binding LoadAllReportsCommand}">
+
+        <CollectionView ItemsSource="{Binding AllReports}" 
+                        Margin="15"
+                        SelectionMode="None">
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="0,0,0,12" Padding="15" CornerRadius="16" HasShadow="True" BorderColor="Transparent" BackgroundColor="White">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding BindingContext.GoToDetailsCommand, Source={x:Reference ThisPage}}"
+                                CommandParameter="{Binding .}" />
+                        </Frame.GestureRecognizers>
+
+                        <Grid ColumnDefinitions="50, *, Auto" RowDefinitions="Auto, Auto" ColumnSpacing="12">
+
+                            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" 
+                                    StrokeShape="RoundRectangle 25" StrokeThickness="0"
+                                    HeightRequest="50" WidthRequest="50"
+                                    VerticalOptions="Start"
+                                    BackgroundColor="#F0F0F0">
+                                <Label Text="{Binding Category, Converter={StaticResource CategoryIconConverter}}" 
+                                       FontSize="24" 
+                                       HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1" Grid.Row="0" Spacing="2">
+                                <Label Text="{Binding Category, Converter={StaticResource CategoryLocConverter}}" 
+                                       FontAttributes="Bold" FontSize="16" TextColor="#333"/>
+                                <Label Text="{Binding Description}" 
+                                       TextColor="#888" FontSize="13" 
+                                       MaxLines="1" LineBreakMode="TailTruncation"/>
+                            </VerticalStackLayout>
+
+                            <Border Grid.Column="2" Grid.Row="0" 
+                                    StrokeShape="RoundRectangle 8" StrokeThickness="0"
+                                    Padding="8,4" VerticalOptions="Start">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="Pending">
+                                        <Setter Property="BackgroundColor" Value="#FFF3E0"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="In Progress">
+                                        <Setter Property="BackgroundColor" Value="#E3F2FD"/>
+                                    </DataTrigger>
+                                    <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="Resolved">
+                                        <Setter Property="BackgroundColor" Value="#E8F5E9"/>
+                                    </DataTrigger>
+                                </Border.Triggers>
+
+                                <Label Text="{Binding Status, Converter={StaticResource StatusLocConverter}}" 
+                                       FontSize="11" FontAttributes="Bold">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Pending">
+                                            <Setter Property="TextColor" Value="#FF9800"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="In Progress">
+                                            <Setter Property="TextColor" Value="#2196F3"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Resolved">
+                                            <Setter Property="TextColor" Value="#4CAF50"/>
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                            </Border>
+
+                            <HorizontalStackLayout Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" 
+                                                   Spacing="15" Margin="0,8,0,0">
+                                <Label Text="{Binding CreatedAt, StringFormat='📅 {0:MM-dd HH:mm}'}" 
+                                       FontSize="11" TextColor="#AAA"/>
+
+                                <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
+                                    <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" VerticalOptions="Center">
+                                        <BoxView.Triggers>
+                                            <DataTrigger TargetType="BoxView" Binding="{Binding Urgency}" Value="1">
+                                                <Setter Property="Color" Value="#4CAF50"/>
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="BoxView" Binding="{Binding Urgency}" Value="2">
+                                                <Setter Property="Color" Value="#FFC107"/>
+                                            </DataTrigger>
+                                            <DataTrigger TargetType="BoxView" Binding="{Binding Urgency}" Value="3">
+                                                <Setter Property="Color" Value="#FF5252"/>
+                                            </DataTrigger>
+                                        </BoxView.Triggers>
+                                    </BoxView>
+                                    <Label Text="{Binding Urgency, StringFormat='Priority: {0}'}" FontSize="11" TextColor="#AAA"/>
+                                </HorizontalStackLayout>
+                            </HorizontalStackLayout>
+
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+</ContentPage>

@@ -1,0 +1,35 @@
+﻿<Shell xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:views="clr-namespace:SchoolFacilityReport.Views"
+       xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings"
+       x:Class="SchoolFacilityReport.AppShell"
+       Title="SchoolFacilityReport">
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="LoginPage" />
+
+    <ShellContent
+        ContentTemplate="{DataTemplate views:RoleSelectionPage}"
+        Route="RoleSelectionPage"
+        IsVisible="False" />
+
+
+
+    <TabBar Route="StudentTabs">
+
+        <Tab Title="{x:Static strings:AppResources.ReportTitle}" Icon="icon_report.png">
+            <ShellContent ContentTemplate="{DataTemplate views:StudentDashboardPage}" />
+        </Tab>
+
+        <Tab Title="{x:Static strings:AppResources.HistoryTitle}" Icon="icon_history.png">
+            <ShellContent ContentTemplate="{DataTemplate views:MyReportsPage}" />
+        </Tab>
+
+        <Tab Title="{x:Static strings:AppResources.SettingsTitle}" Icon="icon_settings.png">
+            <ShellContent ContentTemplate="{DataTemplate views:SettingsPage}" />
+        </Tab>
+
+    </TabBar>
+
+</Shell>
