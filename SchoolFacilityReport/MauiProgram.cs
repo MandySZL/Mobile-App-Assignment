@@ -53,6 +53,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<SettingsViewModel>();
+        builder.Services.AddSingleton<SchoolFacilityReport.Services.NotificationService>();
 
 #if DEBUG
         builder.Logging.AddDebug();
