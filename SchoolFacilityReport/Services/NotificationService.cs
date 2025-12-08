@@ -30,10 +30,10 @@ public class NotificationService
             // 🎯 场景 A: 维修工 (Admin) -> 监听 "INSERT" (新增报修)
             if (userRole == "Maintenance")
             {
-                await channel.On(Supabase.Realtime.PostgresChanges.PostgresChangesOptions.ListenType.Inserts, (sender, change) =>
+                channel.On(Supabase.Realtime.PostgresChanges.PostgresChangesOptions.ListenType.Inserts, (sender, change) =>
                 {
-                    // change.Model 包含了新插入的数据
-                    var newReport = change.Model;
+                    // change.Model<T>() 获取强类型对象
+                    var newReport = change.Model<Report>();
                     ShowToast($"🔔 新报修任务: {newReport.Category}");
                 });
             }
@@ -41,9 +41,9 @@ public class NotificationService
             // 🎯 场景 B: 学生 (Student) -> 监听 "UPDATE" (状态更新)
             if (userRole == "Student" || userRole == "Staff")
             {
-                await channel.On(Supabase.Realtime.PostgresChanges.PostgresChangesOptions.ListenType.Updates, (sender, change) =>
+                channel.On(Supabase.Realtime.PostgresChanges.PostgresChangesOptions.ListenType.Updates, (sender, change) =>
                 {
-                    var updatedReport = change.Model;
+                    var updatedReport = change.Model<Report>();
 
                     // 关键过滤：只提醒 "我自己" 提交的单子
                     if (updatedReport.UserId == currentUserId)
