@@ -15,9 +15,17 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(RoleSelectionPage), typeof(RoleSelectionPage));
         // 👆👆👆 加上这一行！👆👆👆
 
+
+
+
+
         Routing.RegisterRoute(nameof(StudentDashboardPage), typeof(StudentDashboardPage));
         Routing.RegisterRoute(nameof(MyReportsPage), typeof(MyReportsPage));
-        Routing.RegisterRoute(nameof(AdminDashboardPage), typeof(AdminDashboardPage));
         Routing.RegisterRoute(nameof(ReportDetailPage), typeof(ReportDetailPage));
+    }
+    public async Task SwitchToAdminRole()
+    {
+        AdminFlyoutItem.IsVisible = true;
+        await Current.GoToAsync("//AdminDashboard");
     }
 }

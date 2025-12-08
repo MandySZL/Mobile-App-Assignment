@@ -69,7 +69,10 @@ public partial class LoginViewModel : ObservableObject
                     // 2. 弹窗关闭后，继续跳转逻辑
                     if (profile.Role?.Trim().Equals("Maintenance", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        await Shell.Current.GoToAsync(nameof(AdminDashboardPage));
+                        if (Shell.Current is AppShell appShell)
+                        {
+                            await appShell.SwitchToAdminRole();
+                        }
                     }
                     else
                     {
