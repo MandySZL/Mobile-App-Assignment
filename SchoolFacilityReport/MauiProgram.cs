@@ -3,6 +3,7 @@ using Supabase;
 using SchoolFacilityReport.Views;
 using SchoolFacilityReport.ViewModels;
 using CommunityToolkit.Maui; // 👈 引用工具包
+using Plugin.LocalNotification;
 
 namespace SchoolFacilityReport;
 
@@ -14,6 +15,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit() // 👈 关键：启动工具包！
+            .UseLocalNotification() // 👈 启动本地通知
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

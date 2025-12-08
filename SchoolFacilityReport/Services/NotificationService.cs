@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Core;   // 用于 Toast 样式
 using SchoolFacilityReport.Models;
 using Supabase.Realtime;            // 用于实时监听
+using Plugin.LocalNotification;     // 👈 引用本地通知
 
 namespace SchoolFacilityReport.Services;
 
@@ -34,7 +35,7 @@ public class NotificationService
                 {
                     // change.Model<T>() 获取强类型对象
                     var newReport = change.Model<Report>();
-                    ShowToast($"🔔 新报修任务: {newReport.Category}");
+                    ShowNotification("🔔 New Report", $"新报修任务: {newReport.Category}");
                 });
             }
 
@@ -48,7 +49,7 @@ public class NotificationService
                     // 关键过滤：只提醒 "我自己" 提交的单子
                     if (updatedReport.UserId == currentUserId)
                     {
-                        ShowToast($"🔔 状态更新: 你的 {updatedReport.Category} 报修单现在是 {updatedReport.Status}");
+                        ShowNotification("🔔 Status Update", $"你的 {updatedReport.Category} 报修单现在是 {updatedReport.Status}");
                     }
                 });
             }
@@ -62,14 +63,21 @@ public class NotificationService
         }
     }
 
-    // 显示漂亮的 Toast 提示
-    private async void ShowToast(string message)
+    // 显示系统通知 (支持后台/锁屏显示)
+    private async void ShowNotification(string title, string message)
     {
-        // 必须在主线程显示 UI
-        await MainThread.InvokeOnMainThreadAsync(async () =>
+        var request = new NotificationRequest
         {
-            var toast = Toast.Make(message, ToastDuration.Long, 16);
-            await toast.Show();
-        });
+            NotificationId = new Random().Next(1000, 9999),
+            Title = title,
+            Description = message,
+            BadgeNumber = 1,
+            Schedule = new NotificationRequestSchedule
+            {
+                NotifyTime = DateTime.Now.AddSeconds(1) // 立即显示
+            }
+        };
+
+        await LocalNotificationCenter.Current.Show(request);
     }
 }
