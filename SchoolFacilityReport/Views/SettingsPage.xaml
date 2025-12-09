@@ -1,38 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
              xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings;assembly=SchoolFacilityReport"
              x:Class="SchoolFacilityReport.Views.SettingsPage"
-             Title="{x:Static strings:AppResources.SettingsTitle}">
+             Title="{x:Static strings:AppResources.SettingsTitle}"
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False">
 
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                BackgroundColor="White" 
+                StrokeThickness="0" 
+                Padding="20,50,20,20"
+                Shadow="{StaticResource Shadow}">
+            <Label Text="{x:Static strings:AppResources.SettingsTitle}" 
+                   FontSize="20" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center" 
+                   VerticalOptions="Center"
+                   TextColor="{StaticResource TextPrimary}"/>
+        </Border>
 
+        <VerticalStackLayout Grid.Row="1" Spacing="20" Padding="20">
 
-    <VerticalStackLayout Spacing="20" Padding="20">
+            <!-- Language Settings Card -->
+            <Border StrokeThickness="0" 
+                    StrokeShape="RoundRectangle 16" 
+                    BackgroundColor="White"
+                    Padding="20">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="0.05"/>
+                </Border.Shadow>
+                
+                <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="15">
+                     <Border Grid.Column="0" 
+                            HeightRequest="44" 
+                            WidthRequest="44" 
+                            StrokeShape="RoundRectangle 12"
+                            StrokeThickness="0"
+                            BackgroundColor="{StaticResource PrimarySoft}">
+                        <Label Text="🌐" 
+                               FontSize="20" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"/>
+                    </Border>
 
-        <Frame CornerRadius="10" Padding="15">
-            <HorizontalStackLayout Spacing="15">
-                <Label Text="🌐" FontSize="24" VerticalOptions="Center"/>
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                        <Label Text="{x:Static strings:AppResources.LanguageLabel}" 
+                               FontAttributes="Bold" 
+                               FontSize="16"
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="{x:Static strings:AppResources.ChangeLang}" 
+                               TextColor="{StaticResource TextSecondary}" 
+                               FontSize="13"/>
+                    </VerticalStackLayout>
 
-                <VerticalStackLayout>
-                    <Label Text="{x:Static strings:AppResources.LanguageLabel}" FontAttributes="Bold" FontSize="16"/>
-                    <Label Text="{x:Static strings:AppResources.ChangeLang}" TextColor="Gray" FontSize="12"/>
-                </VerticalStackLayout>
+                    <Button Grid.Column="2" 
+                            Text="Change" 
+                            Command="{Binding ChangeLanguageCommand}"
+                            Style="{StaticResource Button}"
+                            BackgroundColor="{StaticResource SurfaceAlt}"
+                            TextColor="{StaticResource Primary}"
+                            HeightRequest="40"
+                            Padding="15,0"
+                            CornerRadius="10"/>
+                </Grid>
+            </Border>
 
-                <Button Text="Change" 
-                        Command="{Binding ChangeLanguageCommand}"
-                        HorizontalOptions="EndAndExpand"
-                        HeightRequest="40"/>
-            </HorizontalStackLayout>
-        </Frame>
+            <!-- Logout Button -->
+            <Button Text="Logout" 
+                    Command="{Binding SignOutCommand}" 
+                    BackgroundColor="#FEE2E2" 
+                    TextColor="#DC2626"
+                    CornerRadius="16"
+                    HeightRequest="56"
+                    FontAttributes="Bold"
+                    Margin="0,20,0,0">
+                <Button.Shadow>
+                    <Shadow Brush="#DC2626" Offset="0,4" Radius="10" Opacity="0.1"/>
+                </Button.Shadow>
+            </Button>
 
-        <Button Text="Logout" 
-                Command="{Binding SignOutCommand}" 
-                BackgroundColor="#FFEBEE" 
-                TextColor="#D32F2F"
-                CornerRadius="10"
-                HeightRequest="50"
-                FontAttributes="Bold"/>
-
-
-    </VerticalStackLayout>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

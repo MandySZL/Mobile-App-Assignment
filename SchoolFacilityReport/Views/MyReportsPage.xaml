@@ -1,59 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
              x:Class="SchoolFacilityReport.Views.MyReportsPage"
-             Title="My History">
+             Title="My History"
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False">
 
-    <RefreshView IsRefreshing="{Binding IsRefreshing}" 
-                 Command="{Binding LoadDataCommand}">
-
-        <CollectionView ItemsSource="{Binding ReportsList}" Margin="15">
-            <CollectionView.EmptyView>
-                <Label Text="还没有报修记录，下拉刷新试试？" 
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+         <Border Grid.Row="0" 
+                BackgroundColor="White" 
+                StrokeThickness="0" 
+                Padding="20,50,20,20"
+                Shadow="{StaticResource Shadow}">
+            <Grid ColumnDefinitions="*, Auto">
+                <Label Grid.Column="0" 
+                       Text="My History" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
                        HorizontalOptions="Center" 
                        VerticalOptions="Center"
-                       TextColor="Gray"/>
-            </CollectionView.EmptyView>
+                       TextColor="{StaticResource TextPrimary}"/>
+            </Grid>
+        </Border>
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Margin="0,0,0,15" Padding="15" CornerRadius="10" HasShadow="True">
-                        <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto">
+        <RefreshView Grid.Row="1" IsRefreshing="{Binding IsRefreshing}" 
+                     Command="{Binding LoadDataCommand}"
+                     Padding="20">
 
-                            <Label Grid.Row="0" Grid.Column="0" 
-                                   Text="{Binding Category, Converter={StaticResource CategoryLocConverter}}"
-                                   FontAttributes="Bold" FontSize="18"/>
+            <CollectionView ItemsSource="{Binding ReportsList}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
 
-                            <Label Grid.Row="0" Grid.Column="1" 
-                                   Text="{Binding Status, Converter={StaticResource StatusLocConverter}}"
-                                   TextColor="OrangeRed" FontAttributes="Bold"/>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,100,0,0">
+                        <Label Text="🕒" FontSize="48" HorizontalOptions="Center"/>
+                        <Label Text="No history yet." 
+                               TextColor="{StaticResource TextSecondary}" 
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
 
-                            <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
-                                   Text="{Binding Description}" 
-                                   TextColor="Gray" MaxLines="2" LineBreakMode="TailTruncation"
-                                   Margin="0,5"/>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeThickness="0" 
+                                StrokeShape="RoundRectangle 16"
+                                BackgroundColor="White"
+                                Padding="15">
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="0.05"/>
+                            </Border.Shadow>
+                            
+                            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="5">
 
-                            <Label Grid.Row="2" Grid.Column="0" 
-                                   Text="{Binding CreatedAt, StringFormat='提交时间: {0:MM-dd HH:mm}'}" 
-                                   FontSize="12" TextColor="Silver"/>
+                                <!-- Header: Category & Status -->
+                                <Label Grid.Row="0" Grid.Column="0" 
+                                       Text="{Binding Category, Converter={StaticResource CategoryLocConverter}}"
+                                       FontAttributes="Bold" FontSize="16" TextColor="{StaticResource TextPrimary}"/>
 
+                                <Label Grid.Row="0" Grid.Column="1" 
+                                       Text="{Binding Status, Converter={StaticResource StatusLocConverter}}"
+                                       TextColor="{StaticResource Primary}" 
+                                       FontAttributes="Bold" FontSize="14"/>
 
-                            <Image Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
-                                   Source="{Binding ImageUrl}"
-                                   Aspect="AspectFill"
-                                   WidthRequest="60" HeightRequest="60"
-                                   IsVisible="{Binding ImageUrl, Converter={StaticResource IsNotNullConverter}}"
-                                   HorizontalOptions="End"
-                                   Margin="10,0,0,0">
-                                <Image.Clip>
-                                    <EllipseGeometry Center="30,30" RadiusX="30" RadiusY="30"/>
-                                </Image.Clip>
-                            </Image>
+                                <!-- Description -->
+                                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                                       Text="{Binding Description}" 
+                                       TextColor="{StaticResource TextSecondary}" 
+                                       MaxLines="2" 
+                                       LineBreakMode="TailTruncation"
+                                       FontSize="14"/>
 
-                        </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </RefreshView>
+                                <!-- Date -->
+                                <Label Grid.Row="2" Grid.Column="0" 
+                                       Text="{Binding CreatedAt, StringFormat='{0:MMM dd, HH:mm}'}" 
+                                       FontSize="12" TextColor="{StaticResource Gray400}"/>
+
+                                <!-- Image -->
+                                <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                       StrokeShape="RoundRectangle 8"
+                                       StrokeThickness="0"
+                                       HeightRequest="60" 
+                                       WidthRequest="60"
+                                       IsVisible="{Binding ImageUrl, Converter={StaticResource IsNotNullConverter}}"
+                                       Margin="10,0,0,0">
+                                    <Image Source="{Binding ImageUrl}" Aspect="AspectFill"/>
+                                </Border>
+
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 </ContentPage>

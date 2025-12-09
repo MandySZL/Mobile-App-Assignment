@@ -76,7 +76,7 @@ public partial class LoginViewModel : ObservableObject
                     if (profile.Role?.Trim().Equals("Maintenance", StringComparison.OrdinalIgnoreCase) == true)
                     {
                         // 维修工 -> 普通推入跳转 (因为 AdminDashboardPage 是手动注册的)
-                        await Shell.Current.GoToAsync(nameof(AdminDashboardPage));
+                        await Shell.Current.GoToAsync("//AdminDashboard");
                     }
                     else
                     {

@@ -1,101 +1,145 @@
-﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
-             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings;assembly=SchoolFacilityReport"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="SchoolFacilityReport.Views.ReportDetailPage"
-             Title="{x:Static strings:AppResources.PageTitle_JobDetails}"
-             BackgroundColor="#F5F5F5">
+             Title="Details"
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="20">
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                BackgroundColor="White" 
+                StrokeThickness="0" 
+                Padding="20,50,20,20"
+                Shadow="{StaticResource Shadow}">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <ImageButton Grid.Column="0" 
+                             Source="{FontImage Glyph='❮', Color={StaticResource TextPrimary}, Size=20}"
+                             Command="{Binding BackCommand}"
+                             HorizontalOptions="Start"/>
+                
+                <Label Grid.Column="1" 
+                       Text="Details" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       TextColor="{StaticResource TextPrimary}"/>
+            </Grid>
+        </Border>
 
-            <Frame CornerRadius="20" HasShadow="True" Padding="0" BackgroundColor="White" BorderColor="Transparent">
-                <VerticalStackLayout Spacing="0">
-
-                    <Image Source="{Binding Report.ImageUrl}" 
-                           HeightRequest="250" 
-                           Aspect="AspectFill"
-                           BackgroundColor="#EEE"
-                           IsVisible="{Binding Report.ImageUrl, Converter={toolkit:IsNotNullConverter}}"/>
-
-                    <VerticalStackLayout Padding="20" Spacing="10">
-
-                        <Label Text="{Binding Report.Category, Converter={StaticResource CategoryLocConverter}}" 
-                               FontSize="24" FontAttributes="Bold" TextColor="#333"/>
-
-                        <HorizontalStackLayout Spacing="5">
-                            <Label Text="📅" FontSize="12"/>
-                            <Label Text="{Binding Report.CreatedAt, StringFormat='{0:yyyy-MM-dd HH:mm}'}" 
-                                   TextColor="#888" FontSize="12"/>
-                        </HorizontalStackLayout>
-
-                        <BoxView HeightRequest="1" Color="#F0F0F0" Margin="0,5"/>
-
-                        <Label Text="{x:Static strings:AppResources.DescLabel}" 
-                               FontSize="12" FontAttributes="Bold" TextColor="#512BD4"/>
-
-                        <Border StrokeThickness="0" BackgroundColor="#FAFAFA" StrokeShape="RoundRectangle 10" Padding="15">
-                            <Label Text="{Binding Report.Description}" FontSize="15" TextColor="#444"/>
-                        </Border>
-                    </VerticalStackLayout>
-                </VerticalStackLayout>
-            </Frame>
-
-            <Label Text="ADMIN ACTIONS" FontSize="12" FontAttributes="Bold" TextColor="#999" Margin="5,10,0,0"/>
-
-            <VerticalStackLayout Spacing="15">
-
-                <VerticalStackLayout Spacing="5">
-                    <Label Text="{x:Static strings:AppResources.StatusUpdateTitle}" FontAttributes="Bold" TextColor="#444"/>
-
-                    <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="15,12">
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding OpenStatusPopupCommand}"/>
-                        </Border.GestureRecognizers>
-
-                        <Grid ColumnDefinitions="*, Auto">
-                            <Label Grid.Column="0" 
-                                   Text="{Binding SelectedStatus, Converter={StaticResource StatusLocConverter}}" 
-                                   TextColor="#333" FontSize="16" VerticalOptions="Center"/>
-
-                            <Label Grid.Column="1" Text="▼" TextColor="#999" FontSize="12" VerticalOptions="Center"/>
+        <ScrollView Grid.Row="1" Padding="20">
+            <VerticalStackLayout Spacing="20">
+                
+                <!-- Main Info Card -->
+                <Border StrokeThickness="0" 
+                        StrokeShape="RoundRectangle 20" 
+                        BackgroundColor="White"
+                        Padding="0">
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Offset="0,4" Radius="15" Opacity="0.05"/>
+                    </Border.Shadow>
+                    
+                    <VerticalStackLayout Spacing="0">
+                        <!-- Image Header -->
+                        <Grid HeightRequest="250" BackgroundColor="{StaticResource SurfaceAlt}">
+                            <Image Source="{Binding Report.ImagePath}" Aspect="AspectFill"/>
+                            <Label Text="No Image" 
+                                   IsVisible="{Binding Report.ImagePath, Converter={x:StaticResource InvertedBoolConverter}}" 
+                                   HorizontalOptions="Center" 
+                                   VerticalOptions="Center"
+                                   TextColor="{StaticResource TextSecondary}"/>
                         </Grid>
-                    </Border>
-                </VerticalStackLayout>
-                <VerticalStackLayout Spacing="5">
-                    <Label Text="{x:Static strings:AppResources.AdminNotesTitle}" FontAttributes="Bold" TextColor="#444"/>
-                    <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="15,5">
-                        <Editor Text="{Binding AdminNotes}" 
-                                Placeholder="Enter notes here..." 
-                                HeightRequest="100" 
-                                TextColor="#333"
-                                PlaceholderColor="#999"
-                                AutoSize="TextChanges"/>
+                        
+                        <!-- Content -->
+                        <VerticalStackLayout Padding="20" Spacing="15">
+                            <Grid ColumnDefinitions="*, Auto">
+                                <Label Grid.Column="0" 
+                                       Text="{Binding Report.Category}" 
+                                       FontSize="24" 
+                                       FontAttributes="Bold" 
+                                       TextColor="{StaticResource TextPrimary}"/>
+                                <Label Grid.Column="1" 
+                                       Text="{Binding Report.CreatedAt, StringFormat='{0:MMM dd}'}" 
+                                       TextColor="{StaticResource TextSecondary}" 
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                            
+                            <BoxView HeightRequest="1" Color="{StaticResource Gray100}"/>
+                            
+                            <Label Text="DESCRIPTION" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}"/>
+                            <Label Text="{Binding Report.Description}" 
+                                   FontSize="15" 
+                                   TextColor="{StaticResource TextPrimary}" 
+                                   LineHeight="1.2"/>
+                                   
+                            <BoxView HeightRequest="1" Color="{StaticResource Gray100}"/>
+                            
+                            <Grid ColumnDefinitions="*,*">
+                                <VerticalStackLayout Grid.Column="0" Spacing="5">
+                                    <Label Text="STATUS" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Text="{Binding Report.Status}" 
+                                           TextColor="{Binding Report.StatusColor}" 
+                                           FontAttributes="Bold"
+                                           FontSize="16"/>
+                                </VerticalStackLayout>
+                                
+                                <VerticalStackLayout Grid.Column="1" Spacing="5">
+                                    <Label Text="URGENCY" FontSize="12" FontAttributes="Bold" TextColor="{StaticResource TextSecondary}"/>
+                                    <Label Text="{Binding Report.Urgency}" 
+                                           TextColor="{Binding Report.UrgencyColor}" 
+                                           FontAttributes="Bold"
+                                           FontSize="16"/>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Admin Action Section -->
+                <VerticalStackLayout IsVisible="{Binding IsAdmin}" Spacing="15">
+                    <Label Text="Admin Actions" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           TextColor="{StaticResource TextPrimary}"
+                           Margin="0,10,0,0"/>
+
+                    <Border StrokeThickness="0" 
+                            StrokeShape="RoundRectangle 20" 
+                            BackgroundColor="White"
+                            Padding="20">
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Offset="0,4" Radius="15" Opacity="0.05"/>
+                        </Border.Shadow>
+                        
+                        <VerticalStackLayout Spacing="15">
+                            <Label Text="Change Status" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold"/>
+                            
+                            <Button Text="{Binding Report.Status, StringFormat='Target Status: {0}'}" 
+                                    Command="{Binding ChangeStatusCommand}" 
+                                    BackgroundColor="{StaticResource SurfaceAlt}" 
+                                    TextColor="{StaticResource TextPrimary}"
+                                    BorderWidth="1"
+                                    BorderColor="{StaticResource Gray200}"/>
+
+                            <Label Text="Admin Notes" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold" Margin="0,10,0,0"/>
+                            <Editor Text="{Binding AdminNote}" 
+                                    Placeholder="Add notes..." 
+                                    HeightRequest="100" 
+                                    BackgroundColor="{StaticResource SurfaceAlt}"
+                                    TextColor="{StaticResource TextPrimary}"/>
+                                    
+                            <Button Text="Save Review" 
+                                    Command="{Binding SaveReviewCommand}" 
+                                    Margin="0,10,0,0"
+                                    Style="{StaticResource Button}"/>
+                        </VerticalStackLayout>
                     </Border>
                 </VerticalStackLayout>
 
             </VerticalStackLayout>
-
-            <Border StrokeThickness="0" StrokeShape="RoundRectangle 25" HeightRequest="55" Margin="0,10,0,20">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#4A00E0" Offset="0.0" />
-                        <GradientStop Color="#8E2DE2" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-                <Border.Shadow>
-                    <Shadow Brush="#8E2DE2" Offset="0,5" Radius="10" Opacity="0.4"/>
-                </Border.Shadow>
-
-                <Grid>
-                    <Label Text="{x:Static strings:AppResources.SaveBtn}" 
-                           TextColor="White" FontAttributes="Bold" FontSize="18" 
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                    <Button BackgroundColor="Transparent" Command="{Binding UpdateReportCommand}"/>
-                </Grid>
-            </Border>
-
-        </VerticalStackLayout>
-    </ScrollView>
+        </ScrollView>
+    </Grid>
 </ContentPage>

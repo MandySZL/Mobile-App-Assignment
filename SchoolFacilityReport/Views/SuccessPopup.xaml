@@ -22,20 +22,14 @@
                    FontSize="14" TextColor="Gray" 
                    HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
 
-            <Border StrokeThickness="0" StrokeShape="RoundRectangle 25" HeightRequest="45" Margin="0,10,0,0">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#4A00E0" Offset="0.0" />
-                        <GradientStop Color="#8E2DE2" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Grid>
-                    <Label Text="Let's Go" TextColor="White" FontAttributes="Bold" 
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                    <Button BackgroundColor="Transparent" Clicked="OnCloseClicked"/>
-                </Grid>
-            </Border>
+            <Button Text="Let's Go" 
+                    Clicked="OnCloseClicked"
+                    BackgroundColor="{StaticResource Primary}"
+                    TextColor="White"
+                    CornerRadius="25"
+                    HeightRequest="50"
+                    FontAttributes="Bold"
+                    Margin="0,10,0,0"/>
 
         </VerticalStackLayout>
     </Border>

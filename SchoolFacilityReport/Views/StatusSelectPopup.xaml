@@ -1,45 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-               xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings;assembly=SchoolFacilityReport"
-               x:Class="SchoolFacilityReport.Views.StatusSelectPopup">
+               x:Class="SchoolFacilityReport.Views.StatusSelectPopup"
+               Color="Transparent"
+               CanBeDismissedByTappingOutsideOfPopup="True">
 
-
-    <Border StrokeThickness="0" StrokeShape="RoundRectangle 20,20,0,0" 
-            BackgroundColor="White" 
-            VerticalOptions="End" HorizontalOptions="Fill"
-            Padding="20,30,20,40"
-            WidthRequest="400">
+    <Border StrokeShape="RoundRectangle 24" 
+            StrokeThickness="0"
+            BackgroundColor="White"
+            WidthRequest="300"
+            Padding="24">
         <Border.Shadow>
-            <Shadow Brush="Black" Offset="0,-5" Radius="20" Opacity="0.2"/>
+            <Shadow Brush="Black" Offset="0,10" Radius="30" Opacity="0.2"/>
         </Border.Shadow>
 
-        <VerticalStackLayout Spacing="15">
+        <VerticalStackLayout Spacing="20">
+            <Label Text="Update Status" 
+                   FontSize="20" 
+                   FontAttributes="Bold" 
+                   HorizontalOptions="Center"
+                   TextColor="{StaticResource TextPrimary}"/>
 
-            <Label Text="{x:Static strings:AppResources.StatusUpdateTitle}" 
-                   FontSize="18" FontAttributes="Bold" TextColor="#333" 
-                   HorizontalOptions="Center" Margin="0,0,0,10"/>
-
-            <Button Text="{x:Static strings:AppResources.StatusPending}" 
-                    Clicked="OnStatusClicked" CommandParameter="Pending"
-                    BackgroundColor="#FFF3E0" TextColor="#FF9800" FontAttributes="Bold"
-                    CornerRadius="12" HeightRequest="50"/>
-
-            <Button Text="{x:Static strings:AppResources.StatusInProgress}" 
-                    Clicked="OnStatusClicked" CommandParameter="In Progress"
-                    BackgroundColor="#E3F2FD" TextColor="#2196F3" FontAttributes="Bold"
-                    CornerRadius="12" HeightRequest="50"/>
-
-            <Button Text="{x:Static strings:AppResources.StatusResolved}" 
-                    Clicked="OnStatusClicked" CommandParameter="Resolved"
-                    BackgroundColor="#E8F5E9" TextColor="#4CAF50" FontAttributes="Bold"
-                    CornerRadius="12" HeightRequest="50"/>
+            <VerticalStackLayout Spacing="12">
+                <Button Text="Pending" 
+                        BackgroundColor="{StaticResource Warning}" 
+                        TextColor="White"
+                        CornerRadius="14"
+                        HeightRequest="44"
+                        Clicked="OnStatusClicked"
+                        CommandParameter="Pending"/>
+                        
+                <Button Text="In Progress" 
+                        BackgroundColor="{StaticResource Info}" 
+                        TextColor="White"
+                        CornerRadius="14"
+                        HeightRequest="44"
+                        Clicked="OnStatusClicked"
+                        CommandParameter="In Progress"/>
+                        
+                <Button Text="Completed" 
+                        BackgroundColor="{StaticResource Success}" 
+                        TextColor="White"
+                        CornerRadius="14"
+                        HeightRequest="44"
+                        Clicked="OnStatusClicked"
+                        CommandParameter="Completed"/>
+            </VerticalStackLayout>
 
             <Button Text="Cancel" 
-                    Clicked="OnCancelClicked"
-                    BackgroundColor="Transparent" TextColor="Gray"
-                    Margin="0,10,0,0"/>
-
+                    BackgroundColor="Transparent" 
+                    TextColor="{StaticResource TextSecondary}"
+                    Clicked="OnCancelClicked"/>
         </VerticalStackLayout>
     </Border>
+
 </toolkit:Popup>

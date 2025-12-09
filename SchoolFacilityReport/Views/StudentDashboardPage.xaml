@@ -1,119 +1,151 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
-             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings;assembly=SchoolFacilityReport"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="SchoolFacilityReport.Views.StudentDashboardPage"
-             Title="{x:Static strings:AppResources.ReportTitle}"
-             BackgroundColor="#FFFFFF">
+             Title="New Report"
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="20" Padding="25">
+    <!-- BindingContext is set in CodeBehind via Dependency Injection -->
 
-            <Grid ColumnDefinitions="Auto, Auto" ColumnSpacing="10" Margin="-5,10,0,10">
-                <Grid Grid.Column="0" 
-                      WidthRequest="40" 
-                      HeightRequest="40" 
-                      BackgroundColor="Transparent"
-                      VerticalOptions="Center">
-                    <Path Data="M20,11V13H8L13.5,18.5L12.08,19.92L4.16,12L12.08,4.08L13.5,5.5L8,11H20Z"
-                          Fill="#333"
-                          Aspect="Uniform"
-                          HeightRequest="28"
-                          WidthRequest="28"
-                          HorizontalOptions="Center"
-                          VerticalOptions="Center"/>
-                    <Grid.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding GoBackCommand}"/>
-                    </Grid.GestureRecognizers>
-                </Grid>
+    <Grid RowDefinitions="Auto, *">
+        <!-- Modern Header -->
+        <Border Grid.Row="0" 
+                BackgroundColor="White" 
+                StrokeThickness="0" 
+                Padding="20,50,20,20"
+                Shadow="{StaticResource Shadow}">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <ImageButton Grid.Column="0" 
+                             Source="{FontImage Glyph='❮', Color={StaticResource TextPrimary}, Size=20}"
+                             Command="{Binding LogoutCommand}"
+                             HorizontalOptions="Start"/>
                 
                 <Label Grid.Column="1" 
-                       Text="{x:Static strings:AppResources.ReportTitle}" 
-                       FontSize="28" FontAttributes="Bold" TextColor="#333"
-                       VerticalOptions="Center"/>
+                       Text="New Report" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       TextColor="{StaticResource TextPrimary}"/>
             </Grid>
+        </Border>
 
-            <VerticalStackLayout Spacing="8">
-                <Label Text="{x:Static strings:AppResources.CategoryLabel}" FontAttributes="Bold" TextColor="#666"/>
-                <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 10" BackgroundColor="#FAFAFA" Padding="15,0">
-                    <Picker ItemsSource="{Binding Categories}" 
-                            SelectedItem="{Binding SelectedCategory}" 
-                            Title="Select..."
-                            TextColor="#333"
-                            TitleColor="#999"/>
-                </Border>
-            </VerticalStackLayout>
+        <ScrollView Grid.Row="1" Padding="20">
+            <VerticalStackLayout Spacing="25">
 
-            <VerticalStackLayout Spacing="8">
-                <Label Text="{x:Static strings:AppResources.UrgencyLabel}" FontAttributes="Bold" TextColor="#666"/>
-                <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 10" BackgroundColor="#FAFAFA" Padding="15,0">
-                    <Picker ItemsSource="{Binding UrgencyLevels}" 
-                            SelectedItem="{Binding SelectedUrgency}" 
-                            Title="Select..."
-                            TextColor="#333"
-                            TitleColor="#999"/>
-                </Border>
-            </VerticalStackLayout>
+                <!-- Welcome Message -->
+                <Label Text="What would you like to report?" 
+                       FontSize="24" 
+                       FontAttributes="Bold" 
+                       TextColor="{StaticResource TextPrimary}"
+                       Margin="0,10,0,0"/>
 
-            <VerticalStackLayout Spacing="8">
-                <Label Text="{x:Static strings:AppResources.DescLabel}" FontAttributes="Bold" TextColor="#666"/>
-                <Border Stroke="#E0E0E0" StrokeThickness="1" StrokeShape="RoundRectangle 10" BackgroundColor="#FAFAFA" Padding="15,10">
-                    <Editor Text="{Binding Description}" 
-                            HeightRequest="120" 
-                            Placeholder="{x:Static strings:AppResources.DescPlaceholder}"
-                            TextColor="#333"
-                            PlaceholderColor="#999"
-                            AutoSize="TextChanges"/>
-                </Border>
-            </VerticalStackLayout>
+                <!-- Category Picker -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Category" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold"/>
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="{StaticResource SurfaceAlt}" Padding="0">
+                        <Picker Title="Select Category" 
+                                ItemsSource="{Binding Categories}"
+                                SelectedItem="{Binding SelectedCategory}"
+                                TextColor="{StaticResource TextPrimary}"
+                                TitleColor="{StaticResource TextSecondary}"
+                                BackgroundColor="Transparent"
+                                Margin="15,0"/>
+                    </Border>
+                </VerticalStackLayout>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                <!-- Urgency Segmented Control (Custom) -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Urgency" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold"/>
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Low" 
+                                BackgroundColor="{StaticResource Success}" 
+                                TextColor="White" 
+                                CornerRadius="12" 
+                                Command="{Binding SetUrgencyCommand}" 
+                                CommandParameter="1"
+                                Opacity="{Binding UrgencyOpacity1}"/>
+                        <Button Grid.Column="1" Text="Medium" 
+                                BackgroundColor="{StaticResource Warning}" 
+                                TextColor="White" 
+                                CornerRadius="12" 
+                                Command="{Binding SetUrgencyCommand}" 
+                                CommandParameter="2"
+                                Opacity="{Binding UrgencyOpacity2}"/>
+                        <Button Grid.Column="2" Text="High" 
+                                BackgroundColor="{StaticResource Error}" 
+                                TextColor="White" 
+                                CornerRadius="12" 
+                                Command="{Binding SetUrgencyCommand}" 
+                                CommandParameter="3"
+                                Opacity="{Binding UrgencyOpacity3}"/>
+                    </Grid>
+                </VerticalStackLayout>
 
-                <Button Grid.Column="0"
-                        Text="{x:Static strings:AppResources.PhotoBtn}" 
-                        Command="{Binding TakePhotoCommand}" 
-                        BackgroundColor="#E3F2FD" 
-                        TextColor="#1565C0"
-                        FontAttributes="Bold"
-                        CornerRadius="10"
-                        HeightRequest="50"/>
+                <!-- Description Editor -->
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Description" TextColor="{StaticResource TextSecondary}" FontSize="14" FontAttributes="Bold"/>
+                    <Border StrokeShape="RoundRectangle 12" StrokeThickness="0" BackgroundColor="{StaticResource SurfaceAlt}" Padding="0">
+                        <Editor Placeholder="Describe the issue in detail..." 
+                                Text="{Binding Description}"
+                                AutoSize="TextChanges"
+                                HeightRequest="120"
+                                BackgroundColor="Transparent"
+                                Margin="15,10"/>
+                    </Border>
+                </VerticalStackLayout>
 
-                <Button Grid.Column="1"
-                        Text="{x:Static strings:AppResources.LocationBtn}" 
-                        Command="{Binding GetLocationCommand}" 
-                        BackgroundColor="#E8F5E9" 
-                        TextColor="#2E7D32"
-                        FontAttributes="Bold"
-                        CornerRadius="10"
-                        HeightRequest="50"/>
-            </Grid>
-
-            <Border StrokeThickness="0" StrokeShape="RoundRectangle 15" 
-                    IsVisible="{Binding PhotoPreview, Converter={toolkit:IsNotNullConverter}}"
-                    HeightRequest="200" HorizontalOptions="Fill">
-                <Image Source="{Binding PhotoPreview}" Aspect="AspectFill"/>
-            </Border>
-
-            <Border StrokeThickness="0" StrokeShape="RoundRectangle 25" HeightRequest="55" Margin="0,10,0,20">
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#4A00E0" Offset="0.0" />
-                        <GradientStop Color="#8E2DE2" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-                <Border.Shadow>
-                    <Shadow Brush="#8E2DE2" Offset="0,8" Radius="15" Opacity="0.4"/>
-                </Border.Shadow>
-
-                <Grid>
-                    <Label Text="{x:Static strings:AppResources.SubmitBtn}" 
-                           TextColor="White" FontAttributes="Bold" FontSize="18" 
-                           HorizontalOptions="Center" VerticalOptions="Center"/>
-                    <Button BackgroundColor="Transparent" Command="{Binding SubmitReportCommand}"/>
+                <!-- Action Buttons -->
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
+                    <Button Grid.Column="0" 
+                            Text="Photo" 
+                            ImageSource="{FontImage Glyph='📷', Color={StaticResource Primary}, Size=18}"
+                            Command="{Binding TakePhotoCommand}"
+                            BackgroundColor="{StaticResource Surface}"
+                            TextColor="{StaticResource Primary}"
+                            BorderColor="{StaticResource PrimarySoft}"
+                            BorderWidth="1"/>
+                            
+                    <Button Grid.Column="1" 
+                            Text="Location" 
+                            ImageSource="{FontImage Glyph='📍', Color={StaticResource Primary}, Size=18}"
+                            Command="{Binding GetLocationCommand}"
+                            BackgroundColor="{StaticResource Surface}"
+                            TextColor="{StaticResource Primary}"
+                            BorderColor="{StaticResource PrimarySoft}"
+                            BorderWidth="1"/>
                 </Grid>
-            </Border>
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <!-- Photo Preview -->
+                <Image Source="{Binding PhotoData}" 
+                       HeightRequest="200" 
+                       Aspect="AspectFill"
+                       IsVisible="{Binding PhotoData, Converter={x:StaticResource IsNotNullConverter}}">
+                    <Image.Clip>
+                        <RoundRectangleGeometry CornerRadius="12"/>
+                    </Image.Clip>
+                </Image>
+
+                <!-- Location Label -->
+                <Label Text="{Binding LocationDisplay}" 
+                       TextColor="{StaticResource TextSecondary}" 
+                       FontSize="13"
+                       IsVisible="{Binding LocationDisplay, Converter={x:StaticResource IsNotNullConverter}}"/>
+
+                <!-- Submit Button -->
+                <Button Text="Submit Report" 
+                        Command="{Binding SubmitReportCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        Margin="0,20,0,40"
+                        Style="{StaticResource Button}"/>
+            </VerticalStackLayout>
+        </ScrollView>
+        
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="2" BackgroundColor="#80FFFFFF" IsVisible="{Binding IsBusy}">
+            <ActivityIndicator IsRunning="True" HorizontalOptions="Center" VerticalOptions="Center"/>
+        </Grid>
+    </Grid>
 </ContentPage>

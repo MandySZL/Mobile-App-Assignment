@@ -11,65 +11,89 @@ public partial class StudentDashboardViewModel : ObservableObject
     private readonly Supabase.Client _supabase;
 
     [ObservableProperty]
-    string description; // 故障描述
+    [NotifyPropertyChangedFor(nameof(IsNotBusy))]
+    bool isBusy;
+
+    public bool IsNotBusy => !IsBusy;
 
     [ObservableProperty]
-    string selectedCategory; // 选中的分类
+    string description; 
 
     [ObservableProperty]
-    string selectedUrgency; // 选中的紧急程度
+    string selectedCategory;
+
+    // Urgency Selection Logic
+    [ObservableProperty]
+    double urgencyOpacity1 = 1.0;
+    [ObservableProperty]
+    double urgencyOpacity2 = 0.5;
+    [ObservableProperty]
+    double urgencyOpacity3 = 0.5;
+
+    private int _selectedUrgencyLevel = 1; // Default to Low
 
     [ObservableProperty]
-    ImageSource photoPreview; // 用来在界面上显示刚才拍的照片
+    ImageSource photoData; // Renamed from PhotoPreview to match XAML
 
-    private FileResult _photoFile; // 内存里实际的照片文件
-    private Location _currentLocation; // 内存里的位置信息
+    [ObservableProperty]
+    string locationDisplay;
 
-    // 下拉菜单的数据源
+    private FileResult _photoFile; 
+    private Location _currentLocation; 
+
     public ObservableCollection<string> Categories { get; } = new()
     {
-        "Electrical (电力)", "Plumbing (水管)", "Furniture (桌椅)", "AC/Fan (空调风扇)", "Other (其他)"
-    };
-
-    public ObservableCollection<string> UrgencyLevels { get; } = new()
-    {
-        "Low (不急)", "Medium (普通)", "High (紧急)"
+        "Electrical", "Plumbing", "Furniture", "AC/Fan", "Other"
     };
 
     public StudentDashboardViewModel(Supabase.Client client)
     {
         _supabase = client;
+        SetUrgency("1"); // Init default
     }
 
-    // 📸 拍照功能
+    [RelayCommand]
+    void SetUrgency(string levelStr)
+    {
+        if (int.TryParse(levelStr, out int level))
+        {
+            _selectedUrgencyLevel = level;
+            // Update Opacities to show selection
+            UrgencyOpacity1 = level == 1 ? 1.0 : 0.5;
+            UrgencyOpacity2 = level == 2 ? 1.0 : 0.5;
+            UrgencyOpacity3 = level == 3 ? 1.0 : 0.5;
+        }
+    }
+
     [RelayCommand]
     async Task TakePhoto()
     {
-        // 改动 1: 检查是否支持 (选图通常都支持)
         if (MediaPicker.Default.IsCaptureSupported)
         {
-            // 改动 2: 把 CapturePhotoAsync (拍照) 改为 PickPhotoAsync (选图)
-            _photoFile = await MediaPicker.Default.PickPhotoAsync();
-
-            if (_photoFile != null)
+            try 
             {
-                // 显示预览
-                var stream = await _photoFile.OpenReadAsync();
-                PhotoPreview = ImageSource.FromStream(() => stream);
+                _photoFile = await MediaPicker.Default.PickPhotoAsync(); // Or CapturePhotoAsync
+                if (_photoFile != null)
+                {
+                    var stream = await _photoFile.OpenReadAsync();
+                    PhotoData = ImageSource.FromStream(() => stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                await Shell.Current.DisplayAlert("Error", "Photo failed: " + ex.Message, "OK");
             }
         }
     }
 
-    // 📍 获取位置功能
     [RelayCommand]
     async Task GetLocation()
     {
+        IsBusy = true;
         try
         {
-            // 先尝试获取最后一次已知位置（速度快）
             _currentLocation = await Geolocation.Default.GetLastKnownLocationAsync();
 
-            // 如果没有，就重新请求定位（精度中等）
             if (_currentLocation == null)
             {
                 _currentLocation = await Geolocation.Default.GetLocationAsync(new GeolocationRequest(GeolocationAccuracy.Medium));
@@ -77,91 +101,95 @@ public partial class StudentDashboardViewModel : ObservableObject
 
             if (_currentLocation != null)
             {
-                await Shell.Current.DisplayAlert("GPS", $"已获取位置: {_currentLocation.Latitude}, {_currentLocation.Longitude}", "OK");
+                LocationDisplay = $"📍 {_currentLocation.Latitude:F4}, {_currentLocation.Longitude:F4}";
             }
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", "无法获取位置 (模拟器需手动设置虚拟位置): " + ex.Message, "OK");
+             LocationDisplay = "📍 Location Error";
+             await Shell.Current.DisplayAlert("Error", "Location failed: " + ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
-    // 🚀 提交报修单
     [RelayCommand]
     async Task SubmitReport()
     {
+        if (IsBusy) return;
+
         if (string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(SelectedCategory))
         {
-            await Shell.Current.DisplayAlert("提示", "请填写描述并选择分类", "OK");
+            await Shell.Current.DisplayAlert("Missing Info", "Please select a category and enter a description.", "OK");
             return;
         }
 
+        IsBusy = true;
         try
         {
             string imageUrl = null;
 
-            // 1. 如果拍了照，先上传照片
             if (_photoFile != null)
             {
                 var fileName = $"{Guid.NewGuid()}.jpg";
                 using var stream = await _photoFile.OpenReadAsync();
-
-                // 【修改开始】：把 Stream 转换成 byte[]
+                
                 byte[] fileBytes;
                 using (var memoryStream = new MemoryStream())
                 {
                     await stream.CopyToAsync(memoryStream);
                     fileBytes = memoryStream.ToArray();
                 }
-                // 【修改结束】
 
-                // 上传到 Supabase Storage (注意：这里传的是 fileBytes)
                 await _supabase.Storage
                     .From("facility_photos")
                     .Upload(fileBytes, fileName);
 
-                // 获取图片的公开访问链接
                 imageUrl = _supabase.Storage.From("facility_photos").GetPublicUrl(fileName);
             }
 
-            // 2. 转换紧急程度 (文本 -> 数字)
-            int urgencyInt = 1;
-            if (SelectedUrgency?.Contains("Medium") == true) urgencyInt = 2;
-            if (SelectedUrgency?.Contains("High") == true) urgencyInt = 3;
-
-            // 3. 准备数据对象
             var report = new Report
             {
                 UserId = Guid.Parse(_supabase.Auth.CurrentUser.Id),
                 Category = SelectedCategory,
                 Description = Description,
-                Urgency = urgencyInt,
+                Urgency = _selectedUrgencyLevel,
                 Status = "Pending",
                 ImageUrl = imageUrl,
                 Latitude = _currentLocation?.Latitude ?? 0,
-                Longitude = _currentLocation?.Longitude ?? 0
+                Longitude = _currentLocation?.Longitude ?? 0,
+                CreatedAt = DateTime.UtcNow // Fixed property name
             };
 
-            // 4. 写入数据库
             await _supabase.From<Report>().Insert(report);
 
-            // 需要引用 using SchoolFacilityReport.Resources.Strings;
-            await Shell.Current.DisplayAlert(AppResources.SuccessTitle, "Report Submitted Successfully", "OK");
+            await Shell.Current.DisplayAlert("Success", "Report Submitted Successfully", "OK");
 
-            // 5. 清空表单
+            // Reset UI
             Description = "";
-            PhotoPreview = null;
+            PhotoData = null;
             _photoFile = null;
+            LocationDisplay = null;
+            SelectedCategory = null;
+            SetUrgency("1");
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert("Error", "提交失败: " + ex.Message, "OK");
+            await Shell.Current.DisplayAlert("Error", "Submission failed: " + ex.Message, "OK");
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
     [RelayCommand]
-    async Task GoBack()
+    async Task Logout()
     {
+        await _supabase.Auth.SignOut();
+        // Navigate back to Login
         await Shell.Current.GoToAsync("//LoginPage");
     }
 }

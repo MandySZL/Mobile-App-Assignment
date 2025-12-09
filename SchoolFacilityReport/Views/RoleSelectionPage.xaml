@@ -1,68 +1,119 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
-             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings;assembly=SchoolFacilityReport"
              x:Class="SchoolFacilityReport.Views.RoleSelectionPage"
-             Title=" "
-             BackgroundColor="#FFFFFF">
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout Spacing="30" Padding="30" VerticalOptions="Center">
+    <!-- BindingContext is set in CodeBehind via Dependency Injection -->
 
-            <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
-                <Label Text="Welcome Aboard! &#x1F44B;" 
-                       FontSize="16" TextColor="#999" 
-                       HorizontalOptions="Center" CharacterSpacing="1"/>
-                <Label Text="{x:Static strings:AppResources.RoleTitle}" 
-                       FontSize="34" FontAttributes="Bold" TextColor="#222" 
-                       HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-            </VerticalStackLayout>
-
-            <Border StrokeThickness="0" StrokeShape="RoundRectangle 20" HeightRequest="110">
-                <Border.Shadow>
-                    <Shadow Brush="#8E2DE2" Offset="0,8" Radius="15" Opacity="0.3"/>
-                </Border.Shadow>
-
-                <Border.Background>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                        <GradientStop Color="#4A00E0" Offset="0.0" />
-                        <GradientStop Color="#8E2DE2" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Background>
-
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SelectRoleCommand}" CommandParameter="Student"/>
-                </Border.GestureRecognizers>
-
-                <Grid ColumnDefinitions="80, *" Padding="15">
-                    <Label Text="&#x1F393;" FontSize="40" VerticalOptions="Center" HorizontalOptions="Center"/>
-
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                        <Label Text="{x:Static strings:AppResources.StudentRole}" 
-                               TextColor="White" FontSize="20" FontAttributes="Bold"/>
-                        <Label Text="Report issues &amp; track status" 
-                               TextColor="White" Opacity="0.8" FontSize="12"/>
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
-
-            <Border Stroke="#EEEEEE" StrokeThickness="2" StrokeShape="RoundRectangle 20" HeightRequest="110" BackgroundColor="#FAFAFA">
-                <Border.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding SelectRoleCommand}" CommandParameter="Maintenance"/>
-                </Border.GestureRecognizers>
-
-                <Grid ColumnDefinitions="80, *" Padding="15">
-                    <Label Text="&#x1F6E0;" FontSize="40" VerticalOptions="Center" HorizontalOptions="Center"/>
-
-                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
-                        <Label Text="{x:Static strings:AppResources.AdminRole}" 
-                               TextColor="#333" FontSize="20" FontAttributes="Bold"/>
-                        <Label Text="Manage repair tickets" 
-                               TextColor="#888" FontSize="12"/>
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
-
+    <Grid RowDefinitions="Auto, *" Padding="30,60,30,30">
+        
+        <!-- Header -->
+        <VerticalStackLayout Grid.Row="0" Spacing="10" Margin="0,0,0,40">
+            <Label Text="Who are you?" 
+                   Style="{StaticResource Headline}"
+                   HorizontalOptions="Start"
+                   FontSize="32"/>
+            <Label Text="Choose your role to get started." 
+                   Style="{StaticResource SubHeadline}"
+                   HorizontalOptions="Start"/>
         </VerticalStackLayout>
-    </ScrollView>
+
+        <!-- Role Cards -->
+        <VerticalStackLayout Grid.Row="1" Spacing="25" VerticalOptions="Center">
+            
+            <!-- Student Card -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{StaticResource Surface}"
+                    StrokeShape="RoundRectangle 24">
+                <Border.Shadow>
+                    <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.05"/>
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectStudentCommand}" />
+                </Border.GestureRecognizers>
+                
+                <Grid ColumnDefinitions="Auto, *, Auto" Padding="20" ColumnSpacing="15">
+                    <!-- Icon -->
+                    <Border Grid.Column="0" 
+                            HeightRequest="60" 
+                            WidthRequest="60" 
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            BackgroundColor="{StaticResource AccentSoft}">
+                        <Label Text="🎓" 
+                               FontSize="28" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"/>
+                    </Border>
+                    
+                    <!-- Text -->
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                        <Label Text="Student" 
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="Report and track issues" 
+                               FontSize="14" 
+                               TextColor="{StaticResource TextSecondary}"/>
+                    </VerticalStackLayout>
+                    
+                    <!-- Arrow -->
+                    <Label Grid.Column="2" 
+                           Text="›" 
+                           FontSize="30" 
+                           TextColor="{StaticResource PrimarySoft}" 
+                           VerticalOptions="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Admin Card -->
+            <Border StrokeThickness="0"
+                    BackgroundColor="{StaticResource Surface}"
+                    StrokeShape="RoundRectangle 24">
+                <Border.Shadow>
+                     <Shadow Brush="Black" Offset="0,10" Radius="20" Opacity="0.05"/>
+                </Border.Shadow>
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SelectAdminCommand}" />
+                </Border.GestureRecognizers>
+                
+                <Grid ColumnDefinitions="Auto, *, Auto" Padding="20" ColumnSpacing="15">
+                    <!-- Icon -->
+                    <Border Grid.Column="0" 
+                            HeightRequest="60" 
+                            WidthRequest="60" 
+                            StrokeShape="RoundRectangle 20"
+                            StrokeThickness="0"
+                            BackgroundColor="{StaticResource PrimarySoft}">
+                        <Label Text="🛠️" 
+                               FontSize="28" 
+                               HorizontalOptions="Center" 
+                               VerticalOptions="Center"/>
+                    </Border>
+                    
+                    <!-- Text -->
+                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                        <Label Text="Maintenance" 
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource TextPrimary}"/>
+                        <Label Text="Manage facility reports" 
+                               FontSize="14" 
+                               TextColor="{StaticResource TextSecondary}"/>
+                    </VerticalStackLayout>
+                    
+                    <!-- Arrow -->
+                    <Label Grid.Column="2" 
+                           Text="›" 
+                           FontSize="30" 
+                           TextColor="{StaticResource PrimarySoft}" 
+                           VerticalOptions="Center"/>
+                </Grid>
+            </Border>
+            
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

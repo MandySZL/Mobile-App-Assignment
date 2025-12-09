@@ -1,106 +1,133 @@
-﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SchoolFacilityReport.ViewModels"
-             xmlns:strings="clr-namespace:SchoolFacilityReport.Resources.Strings;assembly=SchoolFacilityReport"
              x:Class="SchoolFacilityReport.Views.AdminDashboardPage"
-             x:Name="ThisPage"
-             Title="{x:Static strings:AppResources.AdminTitle}"
-             BackgroundColor="#F5F5F5">
+             Title="Admin Dashboard"
+             BackgroundColor="{StaticResource PageBackground}"
+             Shell.NavBarIsVisible="False">
 
-    <RefreshView IsRefreshing="{Binding IsRefreshing}" 
-                 Command="{Binding LoadAllReportsCommand}">
+    <!-- BindingContext is set in CodeBehind via Dependency Injection -->
 
-        <CollectionView ItemsSource="{Binding AllReports}" 
-                        Margin="15"
-                        SelectionMode="None">
+    <Grid RowDefinitions="Auto, *">
+        <!-- Header -->
+        <Border Grid.Row="0" 
+                BackgroundColor="White" 
+                StrokeThickness="0" 
+                Padding="20,50,20,20"
+                Shadow="{StaticResource Shadow}">
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                 <ImageButton Grid.Column="0" 
+                             Source="{FontImage Glyph='❮', Color={StaticResource TextPrimary}, Size=20}"
+                             Command="{Binding LogoutCommand}"
+                             HorizontalOptions="Start"/>
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Margin="0,0,0,12" Padding="15" CornerRadius="16" HasShadow="True" BorderColor="Transparent" BackgroundColor="White">
-                        <Frame.GestureRecognizers>
-                            <TapGestureRecognizer 
-                                Command="{Binding BindingContext.GoToDetailsCommand, Source={x:Reference ThisPage}}"
-                                CommandParameter="{Binding .}" />
-                        </Frame.GestureRecognizers>
+                <Label Grid.Column="1" 
+                       Text="Report List" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       TextColor="{StaticResource TextPrimary}"/>
+                
+                <ImageButton Grid.Column="2" 
+                             Source="{FontImage Glyph='🔄', Color={StaticResource Primary}, Size=22}"
+                             Command="{Binding LoadReportsCommand}"
+                             HorizontalOptions="End"/>
+            </Grid>
+        </Border>
 
-                        <Grid ColumnDefinitions="50, *, Auto" RowDefinitions="Auto, Auto" ColumnSpacing="12">
-
-                            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="0" 
-                                    StrokeShape="RoundRectangle 25" StrokeThickness="0"
-                                    HeightRequest="50" WidthRequest="50"
-                                    VerticalOptions="Start"
-                                    BackgroundColor="#F0F0F0">
-                                <Label Text="{Binding Category, Converter={StaticResource CategoryIconConverter}}" 
-                                       FontSize="24" 
-                                       HorizontalOptions="Center" VerticalOptions="Center"/>
-                            </Border>
-
-                            <VerticalStackLayout Grid.Column="1" Grid.Row="0" Spacing="2">
-                                <Label Text="{Binding Category, Converter={StaticResource CategoryLocConverter}}" 
-                                       FontAttributes="Bold" FontSize="16" TextColor="#333"/>
-                                <Label Text="{Binding Description}" 
-                                       TextColor="#888" FontSize="13" 
-                                       MaxLines="1" LineBreakMode="TailTruncation"/>
-                            </VerticalStackLayout>
-
-                            <Border Grid.Column="2" Grid.Row="0" 
-                                    StrokeShape="RoundRectangle 8" StrokeThickness="0"
-                                    Padding="8,4" VerticalOptions="Start">
-                                <Border.Triggers>
-                                    <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="Pending">
-                                        <Setter Property="BackgroundColor" Value="#FFF3E0"/>
-                                    </DataTrigger>
-                                    <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="In Progress">
-                                        <Setter Property="BackgroundColor" Value="#E3F2FD"/>
-                                    </DataTrigger>
-                                    <DataTrigger TargetType="Border" Binding="{Binding Status}" Value="Resolved">
-                                        <Setter Property="BackgroundColor" Value="#E8F5E9"/>
-                                    </DataTrigger>
-                                </Border.Triggers>
-
-                                <Label Text="{Binding Status, Converter={StaticResource StatusLocConverter}}" 
-                                       FontSize="11" FontAttributes="Bold">
-                                    <Label.Triggers>
-                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Pending">
-                                            <Setter Property="TextColor" Value="#FF9800"/>
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="In Progress">
-                                            <Setter Property="TextColor" Value="#2196F3"/>
-                                        </DataTrigger>
-                                        <DataTrigger TargetType="Label" Binding="{Binding Status}" Value="Resolved">
-                                            <Setter Property="TextColor" Value="#4CAF50"/>
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                            </Border>
-
-                            <HorizontalStackLayout Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="1" 
-                                                   Spacing="15" Margin="0,8,0,0">
-                                <Label Text="{Binding CreatedAt, StringFormat='📅 {0:MM-dd HH:mm}'}" 
-                                       FontSize="11" TextColor="#AAA"/>
-
-                                <HorizontalStackLayout Spacing="4" VerticalOptions="Center">
-                                    <BoxView WidthRequest="8" HeightRequest="8" CornerRadius="4" VerticalOptions="Center">
-                                        <BoxView.Triggers>
-                                            <DataTrigger TargetType="BoxView" Binding="{Binding Urgency}" Value="1">
-                                                <Setter Property="Color" Value="#4CAF50"/>
-                                            </DataTrigger>
-                                            <DataTrigger TargetType="BoxView" Binding="{Binding Urgency}" Value="2">
-                                                <Setter Property="Color" Value="#FFC107"/>
-                                            </DataTrigger>
-                                            <DataTrigger TargetType="BoxView" Binding="{Binding Urgency}" Value="3">
-                                                <Setter Property="Color" Value="#FF5252"/>
-                                            </DataTrigger>
-                                        </BoxView.Triggers>
-                                    </BoxView>
-                                    <Label Text="{Binding Urgency, StringFormat='Priority: {0}'}" FontSize="11" TextColor="#AAA"/>
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
-
-                        </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-    </RefreshView>
+        <!-- Content -->
+        <RefreshView Grid.Row="1" 
+                     Command="{Binding LoadReportsCommand}" 
+                     IsRefreshing="{Binding IsBusy}"
+                     Padding="20">
+            <CollectionView ItemsSource="{Binding Reports}" 
+                            SelectionMode="Single"
+                            SelectionChangedCommand="{Binding SelectReportCommand}"
+                            SelectionChangedCommandParameter="{Binding Path=SelectedItem, Source={RelativeSource Self}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
+                </CollectionView.ItemsLayout>
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border StrokeThickness="0" 
+                                StrokeShape="RoundRectangle 16"
+                                BackgroundColor="White"
+                                Padding="15">
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="0.05"/>
+                            </Border.Shadow>
+                            
+                            <Grid ColumnDefinitions="80, *" ColumnSpacing="15">
+                                <!-- Image Thumbnail -->
+                                <Border Grid.Column="0" 
+                                        HeightRequest="80" 
+                                        WidthRequest="80" 
+                                        StrokeShape="RoundRectangle 12" 
+                                        StrokeThickness="0"
+                                        BackgroundColor="{StaticResource SurfaceAlt}">
+                                    <Image Source="{Binding ImagePath}" Aspect="AspectFill"/>
+                                </Border>
+                                
+                                <!-- Info -->
+                                <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <Label Grid.Column="0" 
+                                               Text="{Binding Category}" 
+                                               FontSize="16" 
+                                               FontAttributes="Bold" 
+                                               TextColor="{StaticResource TextPrimary}"/>
+                                        
+                                        <!-- Urgency Dot -->
+                                        <BoxView Grid.Column="1" 
+                                                 Color="{Binding UrgencyColor}" 
+                                                 HeightRequest="10" 
+                                                 WidthRequest="10" 
+                                                 CornerRadius="5"
+                                                 VerticalOptions="Center"/>
+                                    </Grid>
+                                    
+                                    <Label Text="{Binding Description}" 
+                                           MaxLines="2" 
+                                           LineBreakMode="TailTruncation" 
+                                           TextColor="{StaticResource TextSecondary}" 
+                                           FontSize="13"/>
+                                           
+                                    <Grid ColumnDefinitions="*, Auto" Margin="0,5,0,0">
+                                        <Label Grid.Column="0" 
+                                               Text="{Binding CreatedAt, StringFormat='{0:MMM dd}'}" 
+                                               TextColor="{StaticResource Gray400}" 
+                                               FontSize="12"/>
+                                        
+                                        <!-- Status Pill -->
+                                        <Border Grid.Column="1" 
+                                                StrokeThickness="0" 
+                                                BackgroundColor="{Binding StatusColor}"
+                                                StrokeShape="RoundRectangle 8"
+                                                Padding="8,2">
+                                            <Label Text="{Binding Status}" 
+                                                   TextColor="White" 
+                                                   FontSize="11" 
+                                                   FontAttributes="Bold"/>
+                                        </Border>
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,100,0,0">
+                        <Label Text="📝" FontSize="48" HorizontalOptions="Center"/>
+                        <Label Text="No reports found" 
+                               TextColor="{StaticResource TextSecondary}" 
+                               HorizontalOptions="Center"/>
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
 </ContentPage>
