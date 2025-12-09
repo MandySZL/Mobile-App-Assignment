@@ -158,4 +158,10 @@ public partial class StudentDashboardViewModel : ObservableObject
             await Shell.Current.DisplayAlert("Error", "提交失败: " + ex.Message, "OK");
         }
     }
+
+    [RelayCommand]
+    async Task GoBack()
+    {
+        await Shell.Current.GoToAsync("//LoginPage");
+    }
 }
