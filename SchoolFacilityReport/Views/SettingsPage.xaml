@@ -5,9 +5,7 @@
              x:Class="SchoolFacilityReport.Views.SettingsPage"
              Title="{x:Static strings:AppResources.SettingsTitle}">
 
-    <ContentPage.BindingContext>
-        <vm:SettingsViewModel />
-    </ContentPage.BindingContext>
+
 
     <VerticalStackLayout Spacing="20" Padding="20">
 
@@ -26,6 +24,15 @@
                         HeightRequest="40"/>
             </HorizontalStackLayout>
         </Frame>
+
+        <Button Text="Logout" 
+                Command="{Binding SignOutCommand}" 
+                BackgroundColor="#FFEBEE" 
+                TextColor="#D32F2F"
+                CornerRadius="10"
+                HeightRequest="50"
+                FontAttributes="Bold"/>
+
 
     </VerticalStackLayout>
 </ContentPage>

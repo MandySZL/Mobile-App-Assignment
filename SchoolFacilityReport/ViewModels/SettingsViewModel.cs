@@ -7,6 +7,13 @@ namespace SchoolFacilityReport.ViewModels;
 
 public partial class SettingsViewModel : ObservableObject
 {
+    private readonly Supabase.Client _supabase;
+
+    public SettingsViewModel(Supabase.Client client)
+    {
+        _supabase = client;
+    }
+
     [RelayCommand]
     async Task ChangeLanguage()
     {
@@ -32,5 +39,22 @@ public partial class SettingsViewModel : ObservableObject
 
         // 注意：重启后会回到登录页，但因为 Supabase 记住了登录状态，用户只需点一下登录即可自动跳回
         // (如果要做的更完美，可以在登录页加个自动跳转，但目前这样是最稳妥的)
+    }
+
+
+    [RelayCommand]
+    async Task SignOut()
+    {
+        bool confirm = await Shell.Current.DisplayAlert(AppResources.SettingsTitle, "Are you sure you want to log out?", "Yes", "No");
+        if (!confirm) return;
+
+        // 1. Supabase 登出
+        await _supabase.Auth.SignOut();
+
+        // 2. 清除本地可能的缓存 (可选)
+        Preferences.Remove("LastOpened");
+
+        // 3. 返回登录页
+        await Shell.Current.GoToAsync("//LoginPage");
     }
 }
