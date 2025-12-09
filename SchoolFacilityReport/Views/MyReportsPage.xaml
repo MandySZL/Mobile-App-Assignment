@@ -53,19 +53,23 @@
                                 <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="0.05"/>
                             </Border.Shadow>
                             
-                            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="5">
+                            <Grid RowDefinitions="Auto, Auto, Auto" ColumnDefinitions="*, Auto, Auto" RowSpacing="5" ColumnSpacing="10">
 
-                                <!-- Header: Category & Status -->
+                                <!-- Header: Category -->
                                 <Label Grid.Row="0" Grid.Column="0" 
                                        Text="{Binding Category, Converter={StaticResource CategoryLocConverter}}"
-                                       FontAttributes="Bold" FontSize="16" TextColor="{StaticResource TextPrimary}"/>
+                                       FontAttributes="Bold" FontSize="16" TextColor="{StaticResource TextPrimary}"
+                                       VerticalOptions="Center"/>
 
+                                <!-- Status (Moved to Col 1) -->
                                 <Label Grid.Row="0" Grid.Column="1" 
                                        Text="{Binding Status, Converter={StaticResource StatusLocConverter}}"
                                        TextColor="{StaticResource Primary}" 
-                                       FontAttributes="Bold" FontSize="14"/>
+                                       FontAttributes="Bold" FontSize="14"
+                                       HorizontalOptions="End" 
+                                       VerticalOptions="Center"/>
 
-                                <!-- Description -->
+                                <!-- Description (Spans Col 0-1, avoids Image in Col 2) -->
                                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                        Text="{Binding Description}" 
                                        TextColor="{StaticResource TextSecondary}" 
@@ -73,19 +77,19 @@
                                        LineBreakMode="TailTruncation"
                                        FontSize="14"/>
 
-                                <!-- Date -->
-                                <Label Grid.Row="2" Grid.Column="0" 
+                                <!-- Date (Spans Col 0-1) -->
+                                <Label Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
                                        Text="{Binding CreatedAt, StringFormat='{0:MMM dd, HH:mm}'}" 
                                        FontSize="12" TextColor="{StaticResource Gray400}"/>
 
-                                <!-- Image -->
-                                <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="1"
+                                <!-- Image (Moved to Col 2) -->
+                                <Border Grid.Row="0" Grid.RowSpan="3" Grid.Column="2"
                                        StrokeShape="RoundRectangle 8"
                                        StrokeThickness="0"
-                                       HeightRequest="60" 
-                                       WidthRequest="60"
+                                       HeightRequest="64" 
+                                       WidthRequest="64"
                                        IsVisible="{Binding ImageUrl, Converter={StaticResource IsNotNullConverter}}"
-                                       Margin="10,0,0,0">
+                                       VerticalOptions="Start">
                                     <Image Source="{Binding ImageUrl}" Aspect="AspectFill"/>
                                 </Border>
 
