@@ -15,12 +15,21 @@
                 StrokeThickness="0" 
                 Padding="20,50,20,20"
                 Shadow="{StaticResource Shadow}">
-            <Label Text="{x:Static strings:AppResources.SettingsTitle}" 
-                   FontSize="20" 
-                   FontAttributes="Bold" 
-                   HorizontalOptions="Center" 
-                   VerticalOptions="Center"
-                   TextColor="{StaticResource TextPrimary}"/>
+            <Grid ColumnDefinitions="Auto, *, Auto">
+                <ImageButton Grid.Column="0" 
+                             Source="{FontImage Glyph='❮', Color={StaticResource TextPrimary}, Size=20}"
+                             Command="{Binding GoBackCommand}"
+                             IsVisible="{Binding ShowBackButton}"
+                             HorizontalOptions="Start"/>
+
+                <Label Grid.Column="1" 
+                       Text="{x:Static strings:AppResources.SettingsTitle}" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"
+                       TextColor="{StaticResource TextPrimary}"/>
+            </Grid>
         </Border>
 
         <VerticalStackLayout Grid.Row="1" Spacing="20" Padding="20">

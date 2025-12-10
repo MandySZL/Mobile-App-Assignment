@@ -75,8 +75,16 @@ public partial class LoginViewModel : ObservableObject
                     // 使用 Trim() 和 IgnoreCase 防止数据库里的空格或大小写问题
                     if (profile.Role?.Trim().Equals("Maintenance", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        // 维修工 -> 普通推入跳转 (因为 AdminDashboardPage 是手动注册的)
-                        await Shell.Current.GoToAsync("//AdminDashboard");
+                        // 维修工 -> 使用 AppShell 中的方法来切换 (先设置为可见，再跳转)
+                        if (Shell.Current is AppShell appShell)
+                        {
+                            await appShell.SwitchToAdminRole();
+                        }
+                        else
+                        {
+                             // Fallback just in case, though this shouldn't happen in this app structure
+                             await Shell.Current.GoToAsync("//AdminDashboard");
+                        }
                     }
                     else
                     {

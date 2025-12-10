@@ -5,9 +5,19 @@ using System.Globalization;
 
 namespace SchoolFacilityReport.ViewModels;
 
+[QueryProperty(nameof(ShowBackButton), "ShowBack")]
 public partial class SettingsViewModel : ObservableObject
 {
     private readonly Supabase.Client _supabase;
+
+    [ObservableProperty]
+    bool showBackButton; // Default false
+
+    [RelayCommand]
+    async Task GoBack()
+    {
+        await Shell.Current.GoToAsync("..");
+    }
 
     public SettingsViewModel(Supabase.Client client)
     {

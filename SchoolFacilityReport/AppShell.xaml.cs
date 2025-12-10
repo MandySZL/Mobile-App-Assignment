@@ -22,6 +22,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(StudentDashboardPage), typeof(StudentDashboardPage));
         Routing.RegisterRoute(nameof(MyReportsPage), typeof(MyReportsPage));
         Routing.RegisterRoute(nameof(ReportDetailPage), typeof(ReportDetailPage));
+        Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
     }
     public async Task SwitchToAdminRole()
     {

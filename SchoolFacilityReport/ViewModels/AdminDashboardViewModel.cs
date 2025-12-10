@@ -59,9 +59,15 @@ public partial class AdminDashboardViewModel : ObservableObject
         // 带着选中的 report 数据跳转到详情页
         var navigationParameter = new Dictionary<string, object>
         {
-            { "Report", report }
+            { "Report", report },
+            { "IsAdmin", true }
         };
 
         await Shell.Current.GoToAsync(nameof(Views.ReportDetailPage), navigationParameter);
+    }
+    [RelayCommand]
+    async Task GoToSettings()
+    {
+        await Shell.Current.GoToAsync($"{nameof(Views.SettingsPage)}?ShowBack=true");
     }
 }

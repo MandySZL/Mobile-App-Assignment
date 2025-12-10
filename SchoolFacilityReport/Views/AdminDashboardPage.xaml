@@ -18,8 +18,8 @@
                 Shadow="{StaticResource Shadow}">
             <Grid ColumnDefinitions="Auto, *, Auto">
                  <ImageButton Grid.Column="0" 
-                             Source="{FontImage Glyph='❮', Color={StaticResource TextPrimary}, Size=20}"
-                             Command="{Binding LogoutCommand}"
+                             Source="{FontImage Glyph='⚙', Color={StaticResource TextPrimary}, Size=22}"
+                             Command="{Binding GoToSettingsCommand}"
                              HorizontalOptions="Start"/>
 
                 <Label Grid.Column="1" 
@@ -32,19 +32,19 @@
                 
                 <ImageButton Grid.Column="2" 
                              Source="{FontImage Glyph='🔄', Color={StaticResource Primary}, Size=22}"
-                             Command="{Binding LoadReportsCommand}"
+                             Command="{Binding LoadAllReportsCommand}"
                              HorizontalOptions="End"/>
             </Grid>
         </Border>
 
         <!-- Content -->
         <RefreshView Grid.Row="1" 
-                     Command="{Binding LoadReportsCommand}" 
-                     IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding LoadAllReportsCommand}" 
+                     IsRefreshing="{Binding IsRefreshing}"
                      Padding="20">
-            <CollectionView ItemsSource="{Binding Reports}" 
+            <CollectionView ItemsSource="{Binding AllReports}" 
                             SelectionMode="Single"
-                            SelectionChangedCommand="{Binding SelectReportCommand}"
+                            SelectionChangedCommand="{Binding GoToDetailsCommand}"
                             SelectionChangedCommandParameter="{Binding Path=SelectedItem, Source={RelativeSource Self}}">
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>

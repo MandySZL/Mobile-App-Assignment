@@ -120,9 +120,17 @@ public partial class StudentDashboardViewModel : ObservableObject
     {
         if (IsBusy) return;
 
-        if (string.IsNullOrEmpty(Description) || string.IsNullOrEmpty(SelectedCategory))
+        var missingFields = new List<string>();
+
+        if (string.IsNullOrEmpty(SelectedCategory)) missingFields.Add("Category");
+        if (string.IsNullOrEmpty(Description)) missingFields.Add("Description");
+        if (_photoFile == null) missingFields.Add("Photo");
+        if (_currentLocation == null) missingFields.Add("Location");
+
+        if (missingFields.Any())
         {
-            await Shell.Current.DisplayAlert("Missing Info", "Please select a category and enter a description.", "OK");
+            var message = "Please fill in the following information:\n- " + string.Join("\n- ", missingFields);
+            await Shell.Current.DisplayAlert("Incomplete Report", message, "OK");
             return;
         }
 
@@ -172,6 +180,7 @@ public partial class StudentDashboardViewModel : ObservableObject
             PhotoData = null;
             _photoFile = null;
             LocationDisplay = null;
+            _currentLocation = null;
             SelectedCategory = null;
             SetUrgency("1");
         }

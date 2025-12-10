@@ -3,37 +3,15 @@ using Supabase.Postgrest.Models;
 
 namespace SchoolFacilityReport.Models;
 
-[Table("Reports")]
-public class Report : BaseModel
+[Table("profiles")] // 对应 Supabase 的 profiles 表
+public class Profile : BaseModel
 {
     [PrimaryKey("id")]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
 
-    [Column("user_id")]
-    public Guid UserId { get; set; }
+    [Column("email")]
+    public string Email { get; set; }
 
-    [Column("category")]
-    public string Category { get; set; }
-
-    [Column("description")]
-    public string Description { get; set; }
-
-    [Column("urgency")]
-    public int Urgency { get; set; }
-
-    [Column("status")]
-    public string Status { get; set; }
-
-    [Column("image_url")]
-    public string ImageUrl { get; set; }
-
-    [Column("latitude")]
-    public double Latitude { get; set; }
-
-    [Column("longitude")]
-    public double Longitude { get; set; }
-
-    [Column("created_at")]
-    public DateTime CreatedAt { get; set; }
+    [Column("role")]
+    public string Role { get; set; } // Student, Staff, Maintenance
 }
-
