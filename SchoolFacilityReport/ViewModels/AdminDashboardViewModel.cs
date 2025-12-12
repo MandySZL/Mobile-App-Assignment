@@ -16,6 +16,18 @@ public partial class AdminDashboardViewModel : ObservableObject
     // 维修工看到的列表
     public ObservableCollection<Report> AllReports { get; } = new();
 
+    [ObservableProperty]
+    int totalReportsCount;
+
+    [ObservableProperty]
+    int pendingReportsCount;
+
+    [ObservableProperty]
+    int completedReportsCount;
+
+    [ObservableProperty]
+    int highUrgencyCount;
+
     public AdminDashboardViewModel(Supabase.Client client)
     {
         _supabase = client;
@@ -40,6 +52,12 @@ public partial class AdminDashboardViewModel : ObservableObject
             {
                 AllReports.Add(item);
             }
+
+            // Calculate Stats
+            TotalReportsCount = AllReports.Count;
+            PendingReportsCount = AllReports.Count(r => r.Status?.ToLower() == "pending");
+            CompletedReportsCount = AllReports.Count(r => r.Status?.ToLower() == "completed");
+            HighUrgencyCount = AllReports.Count(r => r.Urgency == 3);
         }
         catch (Exception ex)
         {

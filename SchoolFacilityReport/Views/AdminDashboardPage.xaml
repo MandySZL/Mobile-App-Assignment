@@ -10,34 +10,34 @@
     <!-- BindingContext is set in CodeBehind via Dependency Injection -->
 
     <Grid RowDefinitions="Auto, *">
-        <!-- Header -->
+        <!-- Top Navigation Bar -->
         <Border Grid.Row="0" 
                 BackgroundColor="White" 
                 StrokeThickness="0" 
-                Padding="20,50,20,20"
+                Padding="20,15,20,15"
                 Shadow="{StaticResource Shadow}">
             <Grid ColumnDefinitions="Auto, *, Auto">
-                 <ImageButton Grid.Column="0" 
-                             Source="{FontImage Glyph='⚙', Color={StaticResource TextPrimary}, Size=22}"
+                <ImageButton Grid.Column="0" 
+                             Source="{FontImage Glyph='⚙', Color={StaticResource TextPrimary}, Size=24}"
                              Command="{Binding GoToSettingsCommand}"
                              HorizontalOptions="Start"/>
 
                 <Label Grid.Column="1" 
-                       Text="Report List" 
-                       FontSize="20" 
+                       Text="Admin Panel" 
+                       FontSize="18" 
                        FontAttributes="Bold" 
                        HorizontalOptions="Center" 
                        VerticalOptions="Center"
                        TextColor="{StaticResource TextPrimary}"/>
                 
                 <ImageButton Grid.Column="2" 
-                             Source="{FontImage Glyph='🔄', Color={StaticResource Primary}, Size=22}"
+                             Source="{FontImage Glyph='🔄', Color={StaticResource Primary}, Size=24}"
                              Command="{Binding LoadAllReportsCommand}"
                              HorizontalOptions="End"/>
             </Grid>
         </Border>
 
-        <!-- Content -->
+        <!-- Main Content Area -->
         <RefreshView Grid.Row="1" 
                      Command="{Binding LoadAllReportsCommand}" 
                      IsRefreshing="{Binding IsRefreshing}"
@@ -46,6 +46,107 @@
                             SelectionMode="Single"
                             SelectionChangedCommand="{Binding GoToDetailsCommand}"
                             SelectionChangedCommandParameter="{Binding Path=SelectedItem, Source={RelativeSource Self}}">
+                
+                <CollectionView.Header>
+                    <VerticalStackLayout Spacing="20" Margin="0,10,0,20">
+                        <!-- Stats Overview Header -->
+                        <Label Text="Overview" 
+                               FontSize="22" 
+                               FontAttributes="Bold" 
+                               TextColor="{StaticResource TextPrimary}"/>
+
+                        <!-- Dashboard Stats Grid -->
+                        <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto" ColumnSpacing="15" RowSpacing="15">
+                            
+                            <!-- Total Reports -->
+                            <Border Grid.Row="0" Grid.Column="0"
+                                    StrokeShape="RoundRectangle 16"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#E3F2FD"
+                                    Padding="15"
+                                    HeightRequest="100">
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="5">
+                                    <Label Text="{Binding TotalReportsCount}" 
+                                           FontSize="28" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#1565C0"
+                                           HorizontalOptions="Center"/>
+                                    <Label Text="Total Reports" 
+                                           FontSize="13" 
+                                           TextColor="#1976D2"
+                                           HorizontalOptions="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- High Urgency -->
+                            <Border Grid.Row="0" Grid.Column="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#FFEBEE"
+                                    Padding="15"
+                                    HeightRequest="100">
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="5">
+                                    <Label Text="{Binding HighUrgencyCount}" 
+                                           FontSize="28" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#C62828"
+                                           HorizontalOptions="Center"/>
+                                    <Label Text="Urgent Action" 
+                                           FontSize="13" 
+                                           TextColor="#D32F2F"
+                                           HorizontalOptions="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Pending -->
+                            <Border Grid.Row="1" Grid.Column="0"
+                                    StrokeShape="RoundRectangle 16"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#FFF3E0"
+                                    Padding="15"
+                                    HeightRequest="100">
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="5">
+                                    <Label Text="{Binding PendingReportsCount}" 
+                                           FontSize="28" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#EF6C00"
+                                           HorizontalOptions="Center"/>
+                                    <Label Text="Pending" 
+                                           FontSize="13" 
+                                           TextColor="#F57C00"
+                                           HorizontalOptions="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+
+                            <!-- Completed -->
+                            <Border Grid.Row="1" Grid.Column="1"
+                                    StrokeShape="RoundRectangle 16"
+                                    StrokeThickness="0"
+                                    BackgroundColor="#E8F5E9"
+                                    Padding="15"
+                                    HeightRequest="100">
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="5">
+                                    <Label Text="{Binding CompletedReportsCount}" 
+                                           FontSize="28" 
+                                           FontAttributes="Bold" 
+                                           TextColor="#2E7D32"
+                                           HorizontalOptions="Center"/>
+                                    <Label Text="Completed" 
+                                           FontSize="13" 
+                                           TextColor="#388E3C"
+                                           HorizontalOptions="Center"/>
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <Label Text="Recent Reports" 
+                               FontSize="20" 
+                               FontAttributes="Bold" 
+                               Margin="0,10,0,0"
+                               TextColor="{StaticResource TextPrimary}"/>
+                    </VerticalStackLayout>
+                </CollectionView.Header>
+
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="15"/>
                 </CollectionView.ItemsLayout>
@@ -57,7 +158,7 @@
                                 BackgroundColor="White"
                                 Padding="15">
                             <Border.Shadow>
-                                <Shadow Brush="Black" Offset="0,4" Radius="10" Opacity="0.05"/>
+                                <Shadow Brush="Black" Offset="0,2" Radius="5" Opacity="0.1"/>
                             </Border.Shadow>
                             
                             <Grid ColumnDefinitions="80, *" ColumnSpacing="15">
@@ -106,7 +207,7 @@
                                                 StrokeThickness="0" 
                                                 BackgroundColor="{Binding StatusColor}"
                                                 StrokeShape="RoundRectangle 8"
-                                                Padding="8,2">
+                                                Padding="10,4">
                                             <Label Text="{Binding Status}" 
                                                    TextColor="White" 
                                                    FontSize="11" 
@@ -120,7 +221,7 @@
                 </CollectionView.ItemTemplate>
                 
                 <CollectionView.EmptyView>
-                    <VerticalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,100,0,0">
+                    <VerticalStackLayout Spacing="10" VerticalOptions="Center" HorizontalOptions="Center" Margin="0,50,0,0">
                         <Label Text="📝" FontSize="48" HorizontalOptions="Center"/>
                         <Label Text="No reports found" 
                                TextColor="{StaticResource TextSecondary}" 
