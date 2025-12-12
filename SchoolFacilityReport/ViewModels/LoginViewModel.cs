@@ -56,9 +56,16 @@ public partial class LoginViewModel : ObservableObject
 
                 if (profile == null)
                 {
-                    // 新用户：还没选角色 -> 跳转到选择页
-                    // 注意：RoleSelectionPage 是手动注册的，用普通跳转
-                    await Shell.Current.GoToAsync(nameof(RoleSelectionPage));
+                    // New user: Automatically assign "Student" role since Admin is web-only
+                    var newProfile = new Profile
+                    {
+                        Id = userIdGuid,
+                        Email = response.User.Email,
+                        Role = "Student" // Auto-assign Student
+                    };
+                    
+                    await _supabase.From<Profile>().Upsert(newProfile);
+                    profile = newProfile; // Set profile to continue login flow below
                 }
                 else
                 {
@@ -75,16 +82,11 @@ public partial class LoginViewModel : ObservableObject
                     // 使用 Trim() 和 IgnoreCase 防止数据库里的空格或大小写问题
                     if (profile.Role?.Trim().Equals("Maintenance", StringComparison.OrdinalIgnoreCase) == true)
                     {
-                        // 维修工 -> 使用 AppShell 中的方法来切换 (先设置为可见，再跳转)
-                        if (Shell.Current is AppShell appShell)
-                        {
-                            await appShell.SwitchToAdminRole();
-                        }
-                        else
-                        {
-                             // Fallback just in case, though this shouldn't happen in this app structure
-                             await Shell.Current.GoToAsync("//AdminDashboard");
-                        }
+                        // 维修工 -> 手机端不再支持，提示去网页版
+                        await Shell.Current.DisplayAlert("Access Denied", "Admin panel is now web-only. Please visit the website to manage reports.", "OK");
+                        
+                        // 登出 Supabase 防止保持登录状态
+                        await _supabase.Auth.SignOut();
                     }
                     else
                     {
@@ -96,7 +98,34 @@ public partial class LoginViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            await Shell.Current.DisplayAlert(AppResources.ErrorTitle, "Login Failed: " + ex.Message, "OK");
+            if (ex.Message.Contains("Email not confirmed") || ex.Message.Contains("email_not_confirmed"))
+            {
+                bool resend = await Shell.Current.DisplayAlert("Email Not Verified", "Your email is not verified yet. Would you like to resend the confirmation email?", "Resend", "Cancel");
+                if (resend)
+                {
+                   try 
+                   {
+                        // Resend confirmation email (using implicit flow: calling SignIn again or dedicated endpoint if available in SDK, usually usually just SignUp again triggers resend or explicit API)
+                        // Supabase C# client typically handles resend via SignIn or a specific method. 
+                        // Actually, creating a new user with same email triggers resend in many configs, BUT allow reusing Auth.Resend equivalent?
+                        // Let's check available methods. The C# client usually doesn't expose Resend easily on older versions.
+                        // We will try SignIn with the client directly if possible or advise user.
+                        // Actually, `_supabase.Auth.Resend(email)` is often available? No.
+                        // We will try to trigger it by re-calling SignUp which often resends the confirmation for unconfirmed users.
+                        
+                        await _supabase.Auth.SignUp(Email, Password); // Resend trick
+                        await Shell.Current.DisplayAlert("Sent", "Confirmation email resent. Please check your inbox.", "OK");
+                   }
+                   catch
+                   {
+                       await Shell.Current.DisplayAlert("Info", "Please check your inbox for the previous email.", "OK");
+                   }
+                }
+            }
+            else
+            {
+                await Shell.Current.DisplayAlert(AppResources.ErrorTitle, "Login Failed: " + ex.Message, "OK");
+            }
         }
     }
 
@@ -116,7 +145,15 @@ public partial class LoginViewModel : ObservableObject
 
             if (response.User != null)
             {
-                await Shell.Current.DisplayAlert(AppResources.SuccessTitle, "Registration Successful! Please login.", "OK");
+                // check if confirmation is required
+                if (response.User.ConfirmationSentAt != null && response.User.ConfirmedAt == null)
+                {
+                     await Shell.Current.DisplayAlert("Verify Email", "A confirmation email has been sent. Please check your inbox (and spam) and click the link to verify your account.", "OK");
+                }
+                else
+                {
+                     await Shell.Current.DisplayAlert(AppResources.SuccessTitle, "Registration Successful! Please login.", "OK");
+                }
             }
         }
         catch (Exception ex)

@@ -66,17 +66,10 @@ namespace SchoolFacilityReport
                         // 根据角色跳转
                         if (profile.Role?.Trim().Equals("Maintenance", StringComparison.OrdinalIgnoreCase) == true)
                         {
-                            // 确保切到 AdminDashboard
-                            // 使用 Shell 路由
-                             var shell = Application.Current.MainPage as AppShell;
-                             if (shell != null)
-                             {
-                                 await shell.SwitchToAdminRole();
-                             }
-                             else
-                             {
-                                 await Shell.Current.GoToAsync("//AdminDashboard");
-                             }
+                             // Maintenance user detected during auto-login.
+                             // Since mobile is now Student-only, sign them out.
+                             await _supabase.Auth.SignOut();
+                             // Effectively stays on Login Page (or whatever default)
                         }
                         else
                         {
@@ -85,8 +78,8 @@ namespace SchoolFacilityReport
                     }
                     else
                     {
-                        // 也就是没角色，去选角色
-                        await Shell.Current.GoToAsync(nameof(RoleSelectionPage));
+                        // No profile found? Sign out to be safe.
+                        await _supabase.Auth.SignOut();
                     }
                 }
             }

@@ -2,7 +2,7 @@ using Supabase.Postgrest.Attributes;
 using Supabase.Postgrest.Models;
 using System;
 
-namespace WebAdmin.Models;
+namespace SchoolAdminPanel.Models;
 
 [Table("Reports")]
 public class Report : BaseModel
@@ -37,21 +37,8 @@ public class Report : BaseModel
     [Column("created_at")]
     public DateTime CreatedAt { get; set; }
 
-    // Web Helpers
+    // Helpers
     public string ImagePath => ImageUrl;
-
-    public string UrgencyColor
-    {
-        get
-        {
-            return Urgency switch
-            {
-                3 => "red",        // High
-                2 => "orange",     // Medium
-                _ => "green"       // Low
-            };
-        }
-    }
 
     public string StatusBadgeClass
     {
@@ -61,7 +48,7 @@ public class Report : BaseModel
             if (s == "completed") return "bg-success";
             if (s == "in progress") return "bg-primary";
             if (s == "rejected") return "bg-danger";
-            return "bg-warning text-dark"; // Pending or others
+            return "bg-warning text-dark"; // Pending
         }
     }
 }

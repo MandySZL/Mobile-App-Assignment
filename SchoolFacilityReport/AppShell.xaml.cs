@@ -12,8 +12,7 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
 
         // 👇👇👇 加上这一行！注册身份选择页 👇👇👇
-        Routing.RegisterRoute(nameof(RoleSelectionPage), typeof(RoleSelectionPage));
-        // 👆👆👆 加上这一行！👆👆👆
+
 
 
 
