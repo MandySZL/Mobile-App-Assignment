@@ -141,6 +141,13 @@ public partial class LoginViewModel : ObservableObject
         try
         {
             // 注册新用户
+            var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$";
+            if (!System.Text.RegularExpressions.Regex.IsMatch(Password, passwordPattern))
+            {
+                await Shell.Current.DisplayAlert(AppResources.ErrorTitle, "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.", "OK");
+                return;
+            }
+
             var response = await _supabase.Auth.SignUp(Email, Password);
 
             if (response.User != null)

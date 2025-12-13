@@ -46,10 +46,25 @@
             }
         </div>
         
+        
         @if (!string.IsNullOrEmpty(ErrorMessage))
         {
             <div class="error-message">
                 @ErrorMessage
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(SuccessMessage))
+        {
+            <div class="success-message">
+                @SuccessMessage
+            </div>
+        }
+        
+        @if (ShowResendButton)
+        {
+            <div style="margin-top: 10px; text-align: center;">
+                 <a href="javascript:void(0)" @onclick="ResendConfirmation" style="color: #e94560; font-size: 0.85rem;">Didn't receive email? Resend Confirmation</a>
             </div>
         }
     </div>
@@ -57,20 +72,24 @@
 
 @code {
     private bool IsLoginMode = true;
+    private bool ShowResendButton = false;
     private string Email = "";
     private string Password = "";
     private string ConfirmPassword = "";
     private string ErrorMessage = "";
+    private string SuccessMessage = "";
 
     private void ToggleMode()
     {
         IsLoginMode = !IsLoginMode;
         ErrorMessage = "";
+        SuccessMessage = "";
     }
 
     private async Task HandleSubmit()
     {
         ErrorMessage = "";
+        SuccessMessage = "";
         
         if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
         {
@@ -90,8 +109,31 @@
             {
                 // Login Logic
                 var session = await SupabaseClient.Auth.SignIn(Email, Password);
-                if (session != null)
+                if (session != null && session.User != null)
                 {
+                    // Check User Role
+                    try 
+                    {
+                        var userId = session.User.Id;
+                        var profileResponse = await SupabaseClient
+                            .From<Profile>()
+                            .Filter("id", Supabase.Postgrest.Constants.Operator.Equals, userId)
+                            .Get();
+
+                        var profile = profileResponse.Models.FirstOrDefault();
+
+                        if (profile != null && string.Equals(profile.Role, "Student", StringComparison.OrdinalIgnoreCase))
+                        {
+                            await SupabaseClient.Auth.SignOut();
+                            ErrorMessage = "Access Denied: Students are not authorized to use the Admin Panel.";
+                            return;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error checking role: {ex.Message}");
+                    }
+
                     if (AuthStateProvider is SchoolAdminPanel.Providers.SupabaseAuthenticationStateProvider customProvider)
                     {
                         customProvider.NotifyAuthenticationStateChanged();
@@ -102,18 +144,71 @@
             else
             {
                 // Signup Logic
-                var session = await SupabaseClient.Auth.SignUp(Email, Password);
-                 if (session != null)
+                var passwordPattern = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$";
+                if (!System.Text.RegularExpressions.Regex.IsMatch(Password, passwordPattern))
                 {
-                    // Usually wait for email confirmation or auto-login
-                    IsLoginMode = true;
-                    ErrorMessage = "Registration successful! Please sign in.";
+                    ErrorMessage = "Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character.";
+                    return;
+                }
+
+                var session = await SupabaseClient.Auth.SignUp(Email, Password);
+                if (session != null && session.User != null)
+                {
+                    if (session.User.ConfirmationSentAt != null)
+                    {
+                         IsLoginMode = true;
+                         SuccessMessage = $"Confirmation email sent to {Email}. Please check your inbox (and spam folder).";
+                         ShowResendButton = true; // Allow them to resend if needed
+                    }
+                    else
+                    {
+                         IsLoginMode = true;
+                         SuccessMessage = "Registration successful! You may now sign in.";
+                    }
+                }
+                else
+                {
+                     IsLoginMode = true;
+                     SuccessMessage = "Registration request sent. Please check your email.";
+                     ShowResendButton = true;
                 }
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = ex.Message;
+            if (ex.Message.Contains("Email not confirmed", StringComparison.OrdinalIgnoreCase) || 
+                ex.Message.Contains("email_not_confirmed", StringComparison.OrdinalIgnoreCase))
+            {
+                ErrorMessage = "Your email address is not confirmed yet. Please check your inbox.";
+                ShowResendButton = true;
+            }
+            else
+            {
+                ErrorMessage = ex.Message;
+            }
+        }
+    }
+
+    private async Task ResendConfirmation()
+    {
+        try
+        {
+            // Re-triggering SignUp for an existing unconfirmed user resends the confirmation email
+            await SupabaseClient.Auth.SignUp(Email, Password);
+            SuccessMessage = $"Creating a new confirmation email... Sent to {Email}.";
+            ErrorMessage = "";
+        }
+        catch (Exception ex)
+        {
+             // If they are already confirmed, it might throw "User already registered"
+             if (ex.Message.Contains("already registered", StringComparison.OrdinalIgnoreCase))
+             {
+                 ErrorMessage = "User already registered. Please try logging in.";
+             }
+             else
+             {
+                 ErrorMessage = $"Failed to resend: {ex.Message}";
+             }
         }
     }
 }

@@ -36,17 +36,21 @@ public class SupabaseAuthenticationStateProvider : AuthenticationStateProvider
         // Re-check session
         session = _client.Auth.CurrentSession;
 
-        if (session == null || session.User == null)
+        if (session == null || session.User == null || string.IsNullOrEmpty(session.User.Id))
         {
             return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
         }
 
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.Name, session.User.Email ?? "User"),
-            new Claim(ClaimTypes.NameIdentifier, session.User.Id),
-            new Claim(ClaimTypes.Email, session.User.Email ?? "")
-        };
+        var claims = new List<Claim>();
+        
+        if (!string.IsNullOrEmpty(session.User.Email))
+            claims.Add(new Claim(ClaimTypes.Name, session.User.Email));
+            
+        if (!string.IsNullOrEmpty(session.User.Id))
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, session.User.Id));
+
+        if (!string.IsNullOrEmpty(session.User.Email))
+            claims.Add(new Claim(ClaimTypes.Email, session.User.Email));
 
         var identity = new ClaimsIdentity(claims, "Supabase");
         var user = new ClaimsPrincipal(identity);
