@@ -1,0 +1,119 @@
+@page "/login"
+@layout SchoolAdminPanel.Layout.LoginLayout
+@inject Supabase.Client SupabaseClient
+@inject NavigationManager Navigation
+@inject Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider AuthStateProvider
+
+<div class="login-container">
+    <div class="glass-card">
+        <div class="form-header">
+            <h3>@(IsLoginMode ? "Welcome Back" : "Create Account")</h3>
+            <p>@(IsLoginMode ? "Enter your credentials to access the admin panel." : "Sign up to get started.")</p>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="admin@school.edu" @bind="Email" />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" @bind="Password" />
+        </div>
+
+        @if (!IsLoginMode)
+        {
+            <div class="form-group slide-in">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="••••••••" @bind="ConfirmPassword" />
+            </div>
+        }
+
+        <div class="form-actions">
+            <button class="btn-primary" @onclick="HandleSubmit">
+                @(IsLoginMode ? "Sign In" : "Sign Up")
+            </button>
+        </div>
+
+        <div class="toggle-mode">
+            @if (IsLoginMode)
+            {
+                <span>Don't have an account? <a href="javascript:void(0)" @onclick="ToggleMode">Sign Up</a></span>
+            }
+            else
+            {
+                <span>Already have an account? <a href="javascript:void(0)" @onclick="ToggleMode">Sign In</a></span>
+            }
+        </div>
+        
+        @if (!string.IsNullOrEmpty(ErrorMessage))
+        {
+            <div class="error-message">
+                @ErrorMessage
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private bool IsLoginMode = true;
+    private string Email = "";
+    private string Password = "";
+    private string ConfirmPassword = "";
+    private string ErrorMessage = "";
+
+    private void ToggleMode()
+    {
+        IsLoginMode = !IsLoginMode;
+        ErrorMessage = "";
+    }
+
+    private async Task HandleSubmit()
+    {
+        ErrorMessage = "";
+        
+        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Please fill in all fields.";
+            return;
+        }
+
+        if (!IsLoginMode && Password != ConfirmPassword)
+        {
+            ErrorMessage = "Passwords do not match.";
+            return;
+        }
+
+        try
+        {
+            if (IsLoginMode)
+            {
+                // Login Logic
+                var session = await SupabaseClient.Auth.SignIn(Email, Password);
+                if (session != null)
+                {
+                    if (AuthStateProvider is SchoolAdminPanel.Providers.SupabaseAuthenticationStateProvider customProvider)
+                    {
+                        customProvider.NotifyAuthenticationStateChanged();
+                    }
+                    Navigation.NavigateTo("/");
+                }
+            }
+            else
+            {
+                // Signup Logic
+                var session = await SupabaseClient.Auth.SignUp(Email, Password);
+                 if (session != null)
+                {
+                    // Usually wait for email confirmation or auto-login
+                    IsLoginMode = true;
+                    ErrorMessage = "Registration successful! Please sign in.";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+        }
+    }
+}

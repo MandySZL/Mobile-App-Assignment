@@ -17,4 +17,8 @@ var options = new Supabase.SupabaseOptions
 };
 builder.Services.AddSingleton(provider => new Supabase.Client(url, key, options));
 
+builder.Services.AddOptions();
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider, SchoolAdminPanel.Providers.SupabaseAuthenticationStateProvider>();
+
 await builder.Build().RunAsync();
