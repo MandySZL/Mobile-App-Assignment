@@ -4,9 +4,14 @@
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
+        <SchoolAdminPanel.Layout.LoginLayout>
+            <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh;">
+                <div class="glass-card text-center p-5">
+                    <h3 class="text-white mb-3">Access Required</h3>
+                    <p class="text-white-50 mb-4">You must be signed in to access the Admin Panel.</p>
+                    <a href="login" class="btn btn-primary w-100">Sign In</a>
+                </div>
+            </div>
+        </SchoolAdminPanel.Layout.LoginLayout>
     </NotFound>
 </Router>
