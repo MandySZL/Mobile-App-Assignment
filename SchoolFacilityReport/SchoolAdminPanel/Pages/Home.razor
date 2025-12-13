@@ -1,28 +1,14 @@
 ﻿@page "/"
 @using SchoolAdminPanel.Models
 @using Supabase.Postgrest
-@using Microsoft.AspNetCore.Components.Authorization
 @inject Supabase.Client Supabase
-@inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthStateProvider
 
 <PageTitle>Dashboard</PageTitle>
 
 <div class="container-fluid p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Admin Dashboard</h1>
-        <div>
-            <AuthorizeView>
-                <Authorized>
-                     <span class="me-3">Welcome, @context.User.Identity?.Name</span>
-                     <button class="btn btn-outline-danger me-2" @onclick="Logout">Sign Out</button>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="login" class="btn btn-outline-primary me-2">Sign In</a>
-                </NotAuthorized>
-            </AuthorizeView>
-            <button class="btn btn-primary" @onclick="LoadReports">Refresh</button>
-        </div>
+        <button class="btn btn-primary" @onclick="LoadReports">Refresh</button>
     </div>
 
     @if (isLoading)
@@ -67,13 +53,12 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-striped align-middle">
+            <table class="table table-striped">
                 <thead>
                     <tr>
                         <th>Date</th>
                         <th>Category</th>
                         <th>Status</th>
-                        <th>Action</th> 
                         <th>Urgency</th>
                         <th>Description</th>
                         <th>Image</th>
@@ -86,17 +71,6 @@
                             <td>@item.CreatedAt.ToString("g")</td>
                             <td>@item.Category</td>
                             <td><span class="badge @item.StatusBadgeClass">@item.Status</span></td>
-                            <td>
-                                <select class="form-select form-select-sm" 
-                                        @onchange="@(e => UpdateStatus(item, e.Value?.ToString()))"
-                                        value="@item.Status" 
-                                        style="width: 130px;">
-                                    <option value="Pending">Pending</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Rejected">Rejected</option>
-                                </select>
-                            </td>
                             <td>
                                 @if (item.Urgency == 3) { <span class="badge bg-danger">High</span> }
                                 else if (item.Urgency == 2) { <span class="badge bg-warning text-dark">Medium</span> }
@@ -149,52 +123,5 @@
         {
             isLoading = false;
         }
-    }
-
-    private async Task UpdateStatus(Report item, string? newStatus)
-    {
-        if (string.IsNullOrEmpty(newStatus) || item.Status == newStatus) return;
-
-        // AUTH CHECK
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        if (!authState.User.Identity.IsAuthenticated)
-        {
-            // Revert UI change visually if needed (though difficult without binding refresh, simple redirect is better)
-            Navigation.NavigateTo("/login");
-            return;
-        }
-
-        try
-        {
-            // Update in DB
-            var model = await Supabase.From<Report>()
-                         .Where(x => x.Id == item.Id)
-                         .Set(x => x.Status, newStatus)
-                         .Update();
-
-            // Update local state
-            item.Status = newStatus;
-            
-            // Refresh counts
-            StateHasChanged();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error updating status: {ex.Message}");
-            // Optionally show error to user
-        }
-    }
-
-    private async Task Logout()
-    {
-        await Supabase.Auth.SignOut();
-        // Notify auth state provider manually if needed, or if Supabase client events are hooked up.
-        // For our simple provider, we might need to trigger a refresh or simply reload.
-        // Since our provider checks Supabase.Client.Auth.CurrentSession, a re-check does the trick.
-        if (AuthStateProvider is SchoolAdminPanel.Providers.SupabaseAuthenticationStateProvider customProvider)
-        {
-            customProvider.NotifyAuthenticationStateChanged();
-        }
-        Navigation.NavigateTo("/login");
     }
 }
